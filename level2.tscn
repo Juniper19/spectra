@@ -537,4 +537,4 @@ range_z_max = 1999
 texture = SubResource("GradientTexture2D_1ainy")
 
 [node name="Player" parent="." instance=ExtResource("6_dc5vx")]
-position = Vector2(-37, 7)
+position = Vector2(-47, -26)

@@ -1,0 +1,123 @@
+[gd_scene load_steps=5 format=3 uid="uid://cn2f1c4k0n7tl"]
+
+[ext_resource type="Script" uid="uid://cmxxnq8rajj0l" path="res://color_player.gd" id="1_b740q"]
+[ext_resource type="Texture2D" uid="uid://bahxc50ydmh6e" path="res://assets/Square16.png" id="2_b740q"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_diq8x"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"crouch_idle",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"crouch_walk",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"dash",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": false,
+"name": &"falling",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": false,
+"name": &"latch",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": false,
+"name": &"roll",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"run",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": false,
+"name": &"slide",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"twirl",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b740q")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3d7gm"]
+size = Vector2(16, 16)
+
+[node name="MyPlayer" type="CharacterBody2D"]
+collision_layer = 2
+script = ExtResource("1_b740q")
+
+[node name="Block" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_diq8x")
+animation = &"walk"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_3d7gm")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -27)
+zoom = Vector2(2, 2)
+position_smoothing_enabled = true

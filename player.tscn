@@ -1,79 +1,13 @@
-[gd_scene load_steps=28 format=3 uid="uid://dxomukr8cc1ja"]
+[gd_scene load_steps=5 format=3 uid="uid://dxomukr8cc1ja"]
 
 [ext_resource type="Script" uid="uid://nkyaveqapk1a" path="res://UltimatePlatformerController.gd" id="1_i3pqv"]
-[ext_resource type="Texture2D" uid="uid://bcusgk6fwsb3x" path="res://assets/Player Placeholder Small.png" id="2_hqtel"]
-[ext_resource type="Texture2D" uid="uid://o21dwtw5pna5" path="res://assets/Player Placeholder.png" id="3_sweqy"]
-[ext_resource type="Texture2D" uid="uid://clo6jybo8rgc7" path="res://assets/merlin_.png" id="4_hqtel"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2hs0m"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(0, 320, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hqtel"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sweqy"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1jxqw"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(0, 32, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dw050"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(32, 32, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n7ghd"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(64, 32, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nvl01"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(96, 32, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_b26j0"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(0, 32, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ivps1"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_urp6f"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bwjto"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_606se"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u1c27"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_op7ga"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_q13i1"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pylmc"]
-atlas = ExtResource("4_hqtel")
-region = Rect2(96, 0, 32, 32)
+[ext_resource type="Texture2D" uid="uid://bahxc50ydmh6e" path="res://assets/Square16.png" id="2_onrkg"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_4drs2"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_hqtel")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"crouch_idle",
@@ -81,7 +15,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_hqtel")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"crouch_walk",
@@ -89,7 +23,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_sweqy")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"dash",
@@ -97,7 +31,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_2hs0m")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": false,
 "name": &"falling",
@@ -105,10 +39,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hqtel")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sweqy")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"idle",
@@ -116,16 +47,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_1jxqw")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dw050")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_n7ghd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_nvl01")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"jump",
@@ -133,7 +55,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_b26j0")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": false,
 "name": &"latch",
@@ -141,7 +63,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_hqtel")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": false,
 "name": &"roll",
@@ -149,16 +71,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ivps1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_urp6f")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_bwjto")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_606se")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"run",
@@ -166,7 +79,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_sweqy")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": false,
 "name": &"slide",
@@ -174,7 +87,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_sweqy")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"twirl",
@@ -182,16 +95,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_u1c27")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_op7ga")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_q13i1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pylmc")
+"texture": ExtResource("2_onrkg")
 }],
 "loop": true,
 "name": &"walk",
@@ -199,33 +103,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wcmxd"]
-size = Vector2(14, 19)
-
-[sub_resource type="Gradient" id="Gradient_i3pqv"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.275862)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_hqtel"]
-gradient = SubResource("Gradient_i3pqv")
-
-[sub_resource type="Curve" id="Curve_i3pqv"]
-_data = [Vector2(0.117021, 0.573034), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_hqtel"]
-curve = SubResource("Curve_i3pqv")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sweqy"]
-particle_flag_disable_z = true
-emission_shape = 1
-emission_sphere_radius = 1.0
-initial_velocity_min = 46.22
-initial_velocity_max = 205.88
-gravity = Vector3(0, 200, 0)
-scale_min = 0.0
-scale_max = 2.0
-scale_curve = SubResource("CurveTexture_hqtel")
-color_initial_ramp = SubResource("GradientTexture1D_hqtel")
+size = Vector2(16, 16)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerSprite", "PlayerCollider", "leftRaycast", "middleRaycast", "rightRaycast")]
 script = ExtResource("1_i3pqv")
@@ -239,7 +117,6 @@ gravityScale = 22.0
 descendingGravityFactor = 1.2
 jumpVariable = 8.0
 wallJump = true
-wallLatching = true
 leftRaycast = NodePath("lCast")
 middleRaycast = NodePath("mCast")
 rightRaycast = NodePath("rCast")
@@ -255,27 +132,24 @@ crouch_walk = true
 roll = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -17)
 sprite_frames = SubResource("SpriteFrames_4drs2")
-animation = &"jump"
+animation = &"walk"
 autoplay = "idle"
-frame_progress = 0.992772
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -14.5)
 shape = SubResource("RectangleShape2D_wcmxd")
 
 [node name="lCast" type="RayCast2D" parent="."]
 position = Vector2(-6, -28)
-target_position = Vector2(0, -25)
+target_position = Vector2(0, -12)
 
 [node name="mCast" type="RayCast2D" parent="."]
 position = Vector2(0, -28)
-target_position = Vector2(0, -25)
+target_position = Vector2(0, -12)
 
 [node name="rCast" type="RayCast2D" parent="."]
 position = Vector2(6, -28)
-target_position = Vector2(0, -25)
+target_position = Vector2(0, -12)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -27)
@@ -283,34 +157,22 @@ zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
 [node name="lcast" type="ColorRect" parent="."]
-visible = false
 offset_left = -7.0
-offset_top = -52.0
+offset_top = -40.0
 offset_right = -5.0
-offset_bottom = -28.0
+offset_bottom = -16.0
 color = Color(1, 0.07704, 0.141602, 0.596078)
 
 [node name="mcast" type="ColorRect" parent="."]
-visible = false
 offset_left = -1.0
-offset_top = -52.0
+offset_top = -40.0
 offset_right = 1.0
-offset_bottom = -28.0
+offset_bottom = -16.0
 color = Color(0.52549, 1, 1, 0.498039)
 
 [node name="rcast" type="ColorRect" parent="."]
-visible = false
 offset_left = 5.0
-offset_top = -52.0
+offset_top = -40.0
 offset_right = 7.0
-offset_bottom = -28.0
+offset_bottom = -16.0
 color = Color(0.52549, 1, 1, 0.498039)
-
-[node name="DoubleJumpParticles" type="GPUParticles2D" parent="."]
-emitting = false
-amount = 20
-lifetime = 0.5
-explosiveness = 1.0
-use_fixed_seed = true
-seed = 2265824542
-process_material = SubResource("ParticleProcessMaterial_sweqy")
