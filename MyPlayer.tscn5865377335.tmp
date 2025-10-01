@@ -109,10 +109,6 @@ size = Vector2(16, 16)
 collision_layer = 2
 collision_mask = 32769
 script = ExtResource("1_b740q")
-speed = null
-jump_force = null
-gravity = null
-colors = null
 
 [node name="Block" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_diq8x")

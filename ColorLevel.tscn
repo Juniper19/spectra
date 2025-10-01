@@ -1,7 +1,8 @@
-[gd_scene load_steps=11 format=4 uid="uid://d0iu3lby11od6"]
+[gd_scene load_steps=14 format=4 uid="uid://d0iu3lby11od6"]
 
 [ext_resource type="PackedScene" uid="uid://cn2f1c4k0n7tl" path="res://MyPlayer.tscn" id="1_53qy8"]
 [ext_resource type="Texture2D" uid="uid://bahxc50ydmh6e" path="res://assets/Square16.png" id="2_x7mk1"]
+[ext_resource type="Texture2D" uid="uid://tno0e26iwg7k" path="res://assets/GraySquare16.png" id="3_b1f3j"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b1f3j"]
 texture = ExtResource("2_x7mk1")
@@ -43,6 +44,15 @@ physics_layer_0/collision_layer = 1
 physics_layer_0/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_k8j73")
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vuva3"]
+texture = ExtResource("3_b1f3j")
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_gqgj8"]
+physics_layer_0/collision_layer = 32768
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_vuva3")
+
 [node name="Color Level" type="Node2D"]
 
 [node name="PlatformsRED" type="TileMapLayer" parent="."]
@@ -65,3 +75,13 @@ tile_map_data = PackedByteArray("AAD//wEAAAAAAAAAAAAAAAEAAAAAAAAAAAA=")
 tile_set = SubResource("TileSet_vuva3")
 
 [node name="MyPlayer" parent="." instance=ExtResource("1_53qy8")]
+speed = null
+jump_force = null
+gravity = null
+colors = null
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+
+[node name="DeathPit" type="TileMapLayer" parent="." groups=["deathpits"]]
+tile_map_data = PackedByteArray("AAD3/wQAAAAAAAAAAAD4/wQAAAAAAAAAAAD5/wQAAAAAAAAAAAD6/wQAAAAAAAAAAAD7/wQAAAAAAAAAAAD8/wQAAAAAAAAAAAD9/wQAAAAAAAAAAAD+/wQAAAAAAAAAAAD//wQAAAAAAAAAAAAAAAQAAAAAAAAAAAABAAQAAAAAAAAAAAACAAQAAAAAAAAAAAADAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAFAAQAAAAAAAAAAAAGAAQAAAAAAAAAAAAHAAQAAAAAAAAAAAAIAAQAAAAAAAAAAAAJAAQAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_gqgj8")

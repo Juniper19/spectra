@@ -11,12 +11,14 @@ var current_color_index: int = 0
 
 @onready var sprite: AnimatedSprite2D = $Block
 
+@onready var spawn_point: Node2D = $"../SpawnPoint"
+
 func _ready() -> void:
 	sprite.modulate = colors[current_color_index]
 	update_collision_masks()
 
 func _physics_process(delta: float) -> void:
-	# gravity yuh
+	# Apply gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	else:
@@ -32,6 +34,10 @@ func _physics_process(delta: float) -> void:
 
 	# Apply movement
 	move_and_slide()
+
+	# Death check (after movement)
+	if is_in_death_pit():
+		respawn()
 
 	# Color cycling
 	if Input.is_action_just_pressed("ui_accept"): # space
@@ -56,3 +62,20 @@ func update_collision_masks() -> void:
 			set_collision_mask_value(4, true)
 		2: # blue
 			set_collision_mask_value(3, true)
+			
+# --- Death
+func is_in_death_pit() -> bool:
+	var death_map: TileMapLayer = get_parent().get_node("DeathPits")  # adjust path
+	var cell = death_map.local_to_map(global_position)
+	var tile_id = death_map.get_cell_source_id(cell)
+
+	if tile_id != -1:  # means a tile exists at that cell
+		print("⚠ Player inside death pit at cell:", cell)
+		return true
+	return false
+
+
+
+func respawn() -> void:
+	global_position = spawn_point.global_position
+	velocity = Vector2.ZERO
