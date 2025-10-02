@@ -10,17 +10,21 @@ extends CharacterBody2D
 var current_color_index: int = 0
 var spawn_position: Vector2
 
+# Color selection UI
+var selecting_color := false
+var selected_index := -1
+@onready var color_selector = $"../ColorSelector/Dial"
 
 @onready var sprite: AnimatedSprite2D = $Block
 
 func _ready() -> void:
 	sprite.modulate = colors[current_color_index]
 	update_collision_masks()
-	
 	spawn_position = global_position
+	color_selector.visible = false
 
 func _physics_process(delta: float) -> void:
-	# gravity yuh
+	# gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	else:
@@ -37,17 +41,45 @@ func _physics_process(delta: float) -> void:
 	# Apply movement
 	move_and_slide()
 
-	# Color cycling
-	if Input.is_action_just_pressed("ui_accept"): # space
-		cycle_color()
-		
+	# Handle radial color selector input
+	handle_color_selector()
+
 	# check for deathpit overlap
 	check_deathpit()
 
-func cycle_color() -> void:
-	current_color_index = (current_color_index + 1) % colors.size()
-	sprite.modulate = colors[current_color_index]
-	update_collision_masks()
+# ---------------- Color Selector Logic ----------------
+
+func handle_color_selector() -> void:
+	if Input.is_action_just_pressed("ui_accept"):
+		selecting_color = true
+		selected_index = -1
+		color_selector.visible = true
+		color_selector.colors = colors   # sync with player
+		Engine.time_scale = 0.2          # slow motion for style
+
+	if selecting_color:
+		var dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		if dir != Vector2.ZERO:
+			selected_index = get_index_from_direction(dir, colors.size())
+			color_selector.highlight(selected_index)
+
+	if Input.is_action_just_released("ui_accept"):
+		if selected_index >= 0:
+			current_color_index = selected_index
+			sprite.modulate = colors[current_color_index]
+			update_collision_masks()
+		selecting_color = false
+		color_selector.visible = false
+		Engine.time_scale = 1.0
+
+func get_index_from_direction(dir: Vector2, total: int) -> int:
+	var angle = dir.angle() # radians (-PI to PI)
+	if angle < 0:
+		angle += TAU
+	var slice_angle = TAU / total
+	return int(round(angle / slice_angle)) % total
+
+# ---------------- Collision Masks ----------------
 
 func update_collision_masks() -> void:
 	set_collision_mask_value(1, true) # white
@@ -66,7 +98,8 @@ func update_collision_masks() -> void:
 		2: # blue
 			set_collision_mask_value(3, true)
 
-#------------------------Death logic-------------------------------------------
+# ---------------- Death Logic ----------------
+
 func check_deathpit() -> void:
 	for i in range(get_slide_collision_count()):
 		var collision = get_slide_collision(i)
