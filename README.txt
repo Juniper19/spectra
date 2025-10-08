@@ -1,3 +1,12 @@
+UI
+1 hour - making design doc for new game
+2 hours - setting up platforming and collisions, player can rotate between two colors, only land on blocks of the same color
+1 hour - tile map can be painted with modulate setting, programmed to go based off array of available colors
+3 hours - death pits respawn player at start, trying and failing to get a bounce mechanic when swapping into a platform that matches user color, slow motion on dial
+45 min - making color change dial
+1 hour - debugging color change mechanic with violet
+45 min - making menu ui
+
 GAMEPLAY LEVEL
 2 hours - trying to set up dialogue for the signs. This is hard. Wow.
 30 min - making UI elements for (failed) dialogue system in Aseprite
