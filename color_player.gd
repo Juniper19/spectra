@@ -98,7 +98,7 @@ func update_collision_masks() -> void:
 	set_collision_mask_value(2, false) # red
 	set_collision_mask_value(3, false) # blue
 	set_collision_mask_value(4, false) # green
-	set_collision_mask_value(5, false) # yellow (new)
+	set_collision_mask_value(5, false) # yellow
 	
 	set_collision_mask_value(16, true) # deathpit (always active)
 

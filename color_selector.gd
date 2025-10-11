@@ -16,9 +16,6 @@ func _ready() -> void:
 	print("ColorSelector ready in tree:", is_inside_tree())
 	queue_redraw()
 	
-func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, size), Color(1, 0, 0, 0.4))
-	
 func _refresh_colors() -> void:
 	# Clear arrays & children
 	swatch_panels.clear()
@@ -28,12 +25,18 @@ func _refresh_colors() -> void:
 	for child in hbox.get_children():
 		child.queue_free()
 
+	# Give some horizontal breathing room between panels
+	hbox.add_theme_constant_override("separation", 8)
+
 	# Build a panel per color using StyleBoxFlat
 	for i in range(colors.size()):
 		var panel := Panel.new()
 		panel.name = "Color_%d" % i
 		panel.custom_minimum_size = Vector2(64, 64)
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		panel.pivot_offset = panel.custom_minimum_size / 2.0  # center scaling
+		panel.add_theme_constant_override("margin_left", 4)
+		panel.add_theme_constant_override("margin_right", 4)
 
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = colors[i]
@@ -41,8 +44,6 @@ func _refresh_colors() -> void:
 		sb.corner_radius_top_right = 8
 		sb.corner_radius_bottom_left = 8
 		sb.corner_radius_bottom_right = 8
-
-		# per-side border widths (4.4)
 		sb.border_width_left = 2
 		sb.border_width_right = 2
 		sb.border_width_top = 2
@@ -60,6 +61,50 @@ func _refresh_colors() -> void:
 		selected_index = 0
 	highlight(selected_index)
 
+
+func highlight(index: int) -> void:
+	if colors.is_empty():
+		return
+
+	selected_index = clamp(index, 0, colors.size() - 1)
+	if swatch_panels.size() != colors.size():
+		return
+
+	for i in range(swatch_panels.size()):
+		var panel := swatch_panels[i]
+		var sb := swatch_boxes[i]
+
+		panel.pivot_offset = panel.size / 2.0
+
+		if i == selected_index:
+			# scale up smoothly
+			var tween_up := create_tween().set_ignore_time_scale(true)
+			tween_up.tween_property(panel, "scale", Vector2(1.25, 1.25), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+			# color and border update
+			sb.bg_color = colors[i].lightened(0.10)
+			sb.border_width_left = 4
+			sb.border_width_right = 4
+			sb.border_width_top = 4
+			sb.border_width_bottom = 4
+			sb.border_color = _adaptive_outline(colors[i])
+		else:
+			# scale down smoothly
+			var tween_down := create_tween().set_ignore_time_scale(true)
+			tween_down.tween_property(panel, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+			sb.bg_color = colors[i].darkened(0.20)
+			sb.border_width_left = 2
+			sb.border_width_right = 2
+			sb.border_width_top = 2
+			sb.border_width_bottom = 2
+			sb.border_color = Color(0, 0, 0, 0)
+
+		panel.add_theme_stylebox_override("panel", sb)
+
+	queue_redraw()
+
+
 func _process(_delta: float) -> void:
 	var cam: Camera2D = get_meta("camera", null)
 	if cam:
@@ -72,44 +117,6 @@ func _process(_delta: float) -> void:
 
 			# Place the bar centered above the player
 			position = screen_pos - Vector2(size.x / 2.0, size.y + 80.0)
-
-func highlight(index: int) -> void:
-	if colors.is_empty():
-		return
-
-	selected_index = clamp(index, 0, colors.size() - 1)
-
-	# If we somehow got here before refresh finished, bail gracefully
-	if swatch_panels.size() != colors.size():
-		return
-
-	for i in range(swatch_panels.size()):
-		var panel := swatch_panels[i]
-		var sb := swatch_boxes[i]
-
-		if i == selected_index:
-			panel.scale = Vector2(1.25, 1.25)
-			sb.bg_color = colors[i].lightened(0.10)
-
-			sb.border_width_left = 4
-			sb.border_width_right = 4
-			sb.border_width_top = 4
-			sb.border_width_bottom = 4
-			sb.border_color = _adaptive_outline(colors[i])
-		else:
-			panel.scale = Vector2.ONE
-			sb.bg_color = colors[i].darkened(0.20)
-
-			sb.border_width_left = 2
-			sb.border_width_right = 2
-			sb.border_width_top = 2
-			sb.border_width_bottom = 2
-			sb.border_color = Color(0, 0, 0, 0)
-
-		# Re-apply override to ensure changes take effect
-		panel.add_theme_stylebox_override("panel", sb)
-
-	queue_redraw()
 
 func _make_outline_material(outline_color: Color, thickness: float) -> ShaderMaterial:
 	var shader := Shader.new()

@@ -21,7 +21,7 @@ func _process(_delta: float) -> void:
 			var canvas_xf: Transform2D = get_viewport().get_canvas_transform()
 			var screen_pos: Vector2 = canvas_xf * player.global_position
 
-			# If your Dial’s anchors are centered (all 0.5) and pivot is set to size/2,
+			# If ddial’s anchors are centered (all 0.5) and pivot is set to size/2,
 			# you can use `position = screen_pos`. Otherwise, center it manually:
 			position = screen_pos - size * 0.5
 
