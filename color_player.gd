@@ -22,6 +22,11 @@ func _ready() -> void:
 	update_collision_masks()
 	spawn_position = global_position
 	color_selector.visible = false
+	
+	# Force UI to build its colors immediately on load
+	color_selector.colors = colors
+	color_selector.highlight(current_color_index)
+
 
 func _physics_process(delta: float) -> void:
 	# gravity
@@ -54,11 +59,11 @@ func handle_color_selector() -> void:
 		selecting_color = true
 		selected_index = current_color_index
 		color_selector.visible = true
-		color_selector.colors = colors
+		color_selector.colors = colors # Pass colors and camera before highlighting
+		color_selector.set_meta("camera", $Camera2D)
+		await get_tree().process_frame # Wait one frame so the ColorRects are built before highlighting
 		color_selector.highlight(selected_index)
 		Engine.time_scale = 0.2
-		
-		color_selector.set_meta("camera", $Camera2D)
 
 	if selecting_color:
 		if Input.is_action_just_pressed("ui_left"):

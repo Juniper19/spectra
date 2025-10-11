@@ -5,6 +5,7 @@ extends Control
 		colors = value
 		if is_inside_tree() and value.size() > 0:
 			_refresh_colors()
+			queue_redraw()
 
 var selected_index: int = -1
 
