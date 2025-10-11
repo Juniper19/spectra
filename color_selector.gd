@@ -8,6 +8,8 @@ extends Control
 			queue_redraw()
 
 var selected_index: int = -1
+var swatch_panels: Array[Panel] = []
+var swatch_boxes: Array[StyleBoxFlat] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -18,26 +20,45 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color(1, 0, 0, 0.4))
 	
 func _refresh_colors() -> void:
-	# Clear old ColorRects (in case colors changed)
-	for child in $"HBoxContainer".get_children():
+	# Clear arrays & children
+	swatch_panels.clear()
+	swatch_boxes.clear()
+
+	var hbox := $"HBoxContainer"
+	for child in hbox.get_children():
 		child.queue_free()
 
-	# Create one ColorRect per color
+	# Build a panel per color using StyleBoxFlat
 	for i in range(colors.size()):
-		var rect = ColorRect.new()
-		rect.color = colors[i]
-		rect.custom_minimum_size = Vector2(64, 64)
-		rect.modulate = colors[i]
-		rect.name = "Color_%d" % i
-		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		$"HBoxContainer".add_child(rect)
+		var panel := Panel.new()
+		panel.name = "Color_%d" % i
+		panel.custom_minimum_size = Vector2(64, 64)
+		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = colors[i]
+		sb.corner_radius_top_left = 8
+		sb.corner_radius_top_right = 8
+		sb.corner_radius_bottom_left = 8
+		sb.corner_radius_bottom_right = 8
+
+		# per-side border widths (4.4)
+		sb.border_width_left = 2
+		sb.border_width_right = 2
+		sb.border_width_top = 2
+		sb.border_width_bottom = 2
+		sb.border_color = Color(0, 0, 0, 0) # invisible by default
+
+		panel.add_theme_stylebox_override("panel", sb)
+		hbox.add_child(panel)
+
+		swatch_panels.append(panel)
+		swatch_boxes.append(sb)
 
 	# Initialize highlight state
 	if selected_index < 0:
 		selected_index = 0
 	highlight(selected_index)
-	
-	print(colors)
 
 func _process(_delta: float) -> void:
 	var cam: Camera2D = get_meta("camera", null)
@@ -52,28 +73,43 @@ func _process(_delta: float) -> void:
 			# Place the bar centered above the player
 			position = screen_pos - Vector2(size.x / 2.0, size.y + 80.0)
 
-
 func highlight(index: int) -> void:
 	if colors.is_empty():
 		return
 
 	selected_index = clamp(index, 0, colors.size() - 1)
 
-	var hbox := $"HBoxContainer"
-	var child_count := hbox.get_child_count()
-	for i in range(child_count):
-		var rect = hbox.get_child(i) as ColorRect
-		if i < colors.size():
-			if i == selected_index:
-				rect.scale = Vector2(1.3, 1.3)
-				rect.modulate = colors[i].lightened(0.1)
-				rect.material = _make_outline_material(Color.WHITE, 2.0)
-			else:
-				rect.scale = Vector2.ONE
-				rect.modulate = colors[i].darkened(0.2)
-				rect.material = null
-	queue_redraw()
+	# If we somehow got here before refresh finished, bail gracefully
+	if swatch_panels.size() != colors.size():
+		return
 
+	for i in range(swatch_panels.size()):
+		var panel := swatch_panels[i]
+		var sb := swatch_boxes[i]
+
+		if i == selected_index:
+			panel.scale = Vector2(1.25, 1.25)
+			sb.bg_color = colors[i].lightened(0.10)
+
+			sb.border_width_left = 4
+			sb.border_width_right = 4
+			sb.border_width_top = 4
+			sb.border_width_bottom = 4
+			sb.border_color = _adaptive_outline(colors[i])
+		else:
+			panel.scale = Vector2.ONE
+			sb.bg_color = colors[i].darkened(0.20)
+
+			sb.border_width_left = 2
+			sb.border_width_right = 2
+			sb.border_width_top = 2
+			sb.border_width_bottom = 2
+			sb.border_color = Color(0, 0, 0, 0)
+
+		# Re-apply override to ensure changes take effect
+		panel.add_theme_stylebox_override("panel", sb)
+
+	queue_redraw()
 
 func _make_outline_material(outline_color: Color, thickness: float) -> ShaderMaterial:
 	var shader := Shader.new()
@@ -102,3 +138,12 @@ func _make_outline_material(outline_color: Color, thickness: float) -> ShaderMat
 	mat.set_shader_parameter("outline_color", outline_color)
 	mat.set_shader_parameter("thickness", thickness)
 	return mat
+
+func _adaptive_outline(c: Color) -> Color:
+	var brightness = (c.r + c.g + c.b) / 3.0
+	if brightness > 0.6:
+		# if color is bright (like yellow/green), darken instead of lighten
+		return c.darkened(0.4)
+	else:
+		# if color is dark (like red/blue), lighten
+		return c.lightened(0.4)
