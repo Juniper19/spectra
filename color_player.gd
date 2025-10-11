@@ -6,7 +6,7 @@ extends CharacterBody2D
 @export var gravity: float = 1000.0
 
 # Color settings
-@export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
+@export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
 var current_color_index: int = 0
 var spawn_position: Vector2
 
@@ -31,11 +31,11 @@ func _physics_process(delta: float) -> void:
 		velocity.y = 0
 
 	# Horizontal movement
-	var direction = Input.get_axis("ui_left", "ui_right")
+	var direction = Input.get_axis("left", "right")
 	velocity.x = direction * speed
 
 	# Jump
-	if Input.is_action_just_pressed("ui_up") and is_on_floor():
+	if Input.is_action_just_pressed("up") and is_on_floor():
 		velocity.y = -jump_force
 
 	# Apply movement
@@ -57,20 +57,18 @@ func handle_color_selector() -> void:
 		color_selector.colors = colors
 		color_selector.highlight(selected_index)
 		Engine.time_scale = 0.2
+		
+		color_selector.set_meta("camera", $Camera2D)
 
 	if selecting_color:
-		# Move through color indices
 		if Input.is_action_just_pressed("ui_left"):
 			selected_index = (selected_index - 1 + colors.size()) % colors.size()
 			color_selector.highlight(selected_index)
-
 		elif Input.is_action_just_pressed("ui_right"):
 			selected_index = (selected_index + 1) % colors.size()
 			color_selector.highlight(selected_index)
 
 
-
-	# Confirm color when letting go
 	if Input.is_action_just_released("ui_accept"):
 		selecting_color = false
 		color_selector.visible = false
@@ -95,6 +93,7 @@ func update_collision_masks() -> void:
 	set_collision_mask_value(2, false) # red
 	set_collision_mask_value(3, false) # blue
 	set_collision_mask_value(4, false) # green
+	set_collision_mask_value(5, false) # yellow (new)
 	
 	set_collision_mask_value(16, true) # deathpit (always active)
 
@@ -106,6 +105,8 @@ func update_collision_masks() -> void:
 			set_collision_mask_value(4, true)
 		2: # blue
 			set_collision_mask_value(3, true)
+		3: #yellow
+			set_collision_mask_value(5, true)
 
 # ---------------- Death Logic ----------------
 
