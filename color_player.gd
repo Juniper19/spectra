@@ -52,25 +52,34 @@ func _physics_process(delta: float) -> void:
 func handle_color_selector() -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		selecting_color = true
-		selected_index = -1
+		selected_index = current_color_index
 		color_selector.visible = true
-		color_selector.colors = colors   # sync with player
-		Engine.time_scale = 0.2          # slow motion for style
+		color_selector.colors = colors
+		color_selector.highlight(selected_index)
+		Engine.time_scale = 0.2
 
 	if selecting_color:
-		var dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-		if dir != Vector2.ZERO:
-			selected_index = get_index_from_direction(dir, colors.size())
+		# Move through color indices
+		if Input.is_action_just_pressed("ui_left"):
+			selected_index = (selected_index - 1 + colors.size()) % colors.size()
 			color_selector.highlight(selected_index)
 
+		elif Input.is_action_just_pressed("ui_right"):
+			selected_index = (selected_index + 1) % colors.size()
+			color_selector.highlight(selected_index)
+
+
+
+	# Confirm color when letting go
 	if Input.is_action_just_released("ui_accept"):
+		selecting_color = false
+		color_selector.visible = false
+		Engine.time_scale = 1.0
+
 		if selected_index >= 0:
 			current_color_index = selected_index
 			sprite.modulate = colors[current_color_index]
 			update_collision_masks()
-		selecting_color = false
-		color_selector.visible = false
-		Engine.time_scale = 1.0
 
 func get_index_from_direction(dir: Vector2, total: int) -> int:
 	var angle = dir.angle() # radians (-PI to PI)
