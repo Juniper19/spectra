@@ -13,7 +13,7 @@ var spawn_position: Vector2
 # Color selection UI
 var selecting_color := false
 var selected_index := -1
-@onready var color_selector = $"../ColorSelector/Dial"
+@onready var color_selector = $"../UI/ColorSelector"
 
 @onready var sprite: AnimatedSprite2D = $Block
 
