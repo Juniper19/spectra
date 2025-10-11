@@ -66,12 +66,14 @@ func handle_color_selector() -> void:
 		Engine.time_scale = 0.2
 
 	if selecting_color:
-		if Input.is_action_just_pressed("ui_left"):
+		if Input.is_action_just_pressed("left"):
 			selected_index = (selected_index - 1 + colors.size()) % colors.size()
 			color_selector.highlight(selected_index)
-		elif Input.is_action_just_pressed("ui_right"):
+			_apply_color(selected_index)
+		elif Input.is_action_just_pressed("right"):
 			selected_index = (selected_index + 1) % colors.size()
 			color_selector.highlight(selected_index)
+			_apply_color(selected_index)
 
 
 	if Input.is_action_just_released("ui_accept"):
@@ -83,6 +85,11 @@ func handle_color_selector() -> void:
 			current_color_index = selected_index
 			sprite.modulate = colors[current_color_index]
 			update_collision_masks()
+			
+func _apply_color(index: int) -> void:
+	current_color_index = index
+	sprite.modulate = colors[index]
+	update_collision_masks()
 
 func get_index_from_direction(dir: Vector2, total: int) -> int:
 	var angle = dir.angle() # radians (-PI to PI)
@@ -97,7 +104,7 @@ func update_collision_masks() -> void:
 	set_collision_mask_value(1, true) # white
 	set_collision_mask_value(2, false) # red
 	set_collision_mask_value(3, false) # blue
-	set_collision_mask_value(4, false) # green
+	set_collision_mask_value(4, false) # green 
 	set_collision_mask_value(5, false) # yellow
 	
 	set_collision_mask_value(16, true) # deathpit (always active)
