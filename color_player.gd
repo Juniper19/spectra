@@ -35,56 +35,58 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0
 
-	# Horizontal movement
-	var direction = Input.get_axis("left", "right")
-	velocity.x = direction * speed
+	# only apply player input if not selecting color
+	if not selecting_color:
+		var direction = Input.get_axis("left", "right")
+		velocity.x = direction * speed
+		# allow jumping as usual
+		if Input.is_action_just_pressed("up") and is_on_floor():
+			velocity.y = -jump_force
+	else:
+		# no new input — but keep momentum (don't zero velocity)
+		# optional: apply slight drag if you want subtle slowdown while in slow-mo
+		velocity.x = lerp(velocity.x, 0.0, 0.02)
 
-	# Jump
-	if Input.is_action_just_pressed("up") and is_on_floor():
-		velocity.y = -jump_force
-
-	# Apply movement
 	move_and_slide()
 
-	# Handle radial color selector input
 	handle_color_selector()
-
-	# check for deathpit overlap
 	check_deathpit()
+
+
 
 # ---------------- Color Selector Logic ----------------
 
 func handle_color_selector() -> void:
+	# --- open selector (when pressing Space / ui_accept) ---
 	if Input.is_action_just_pressed("ui_accept"):
 		selecting_color = true
 		selected_index = current_color_index
 		color_selector.visible = true
-		color_selector.colors = colors # Pass colors and camera before highlighting
+		color_selector.colors = colors
 		color_selector.set_meta("camera", $Camera2D)
-		await get_tree().process_frame # Wait one frame so the ColorRects are built before highlighting
+		await get_tree().process_frame
 		color_selector.highlight(selected_index)
 		Engine.time_scale = 0.2
 
+	# --- while selector is open ---
 	if selecting_color:
+		# handle color swapping inputs
 		if Input.is_action_just_pressed("left"):
 			selected_index = (selected_index - 1 + colors.size()) % colors.size()
 			color_selector.highlight(selected_index)
 			_apply_color(selected_index)
+
 		elif Input.is_action_just_pressed("right"):
 			selected_index = (selected_index + 1) % colors.size()
 			color_selector.highlight(selected_index)
 			_apply_color(selected_index)
 
-
+	# --- close selector (when releasing Space / ui_accept) ---
 	if Input.is_action_just_released("ui_accept"):
 		selecting_color = false
 		color_selector.visible = false
 		Engine.time_scale = 1.0
 
-		if selected_index >= 0:
-			current_color_index = selected_index
-			sprite.modulate = colors[current_color_index]
-			update_collision_masks()
 			
 func _apply_color(index: int) -> void:
 	current_color_index = index
