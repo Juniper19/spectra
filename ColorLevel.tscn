@@ -1,9 +1,16 @@
-[gd_scene load_steps=15 format=4 uid="uid://d0iu3lby11od6"]
+[gd_scene load_steps=19 format=4 uid="uid://d0iu3lby11od6"]
 
 [ext_resource type="PackedScene" uid="uid://cn2f1c4k0n7tl" path="res://MyPlayer.tscn" id="1_53qy8"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Art/TilesBasic.png" id="1_k8j73"]
+[ext_resource type="Shader" uid="uid://d0no8jpugg18o" path="res://TileShader.gdshader" id="1_vuva3"]
 [ext_resource type="Texture2D" uid="uid://br2w5hknylhm2" path="res://assets/GraySquare16.png" id="3_b1f3j"]
 [ext_resource type="PackedScene" uid="uid://8k0wbie5ewlm" path="res://ColorSelector.tscn" id="4_7rihj"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gqgj8"]
+shader = ExtResource("1_vuva3")
+shader_parameter/outline_color = Color(0, 0, 0, 1)
+shader_parameter/tolerance = 0.1
+shader_parameter/glow_intensity = 0.2
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gqgj8"]
 texture = ExtResource("1_k8j73")
@@ -128,6 +135,12 @@ terrain_set_0/terrain_0/name = "Platform0"
 terrain_set_0/terrain_0/color = Color(1, 0, 0, 1)
 sources/1 = SubResource("TileSetAtlasSource_gqgj8")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k8j73"]
+shader = ExtResource("1_vuva3")
+shader_parameter/outline_color = Color(0, 0, 0, 1)
+shader_parameter/tolerance = 0.1
+shader_parameter/glow_intensity = 0.2
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k8j73"]
 texture = ExtResource("1_k8j73")
 0:0/0 = 0
@@ -250,6 +263,12 @@ terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Blocks"
 terrain_set_0/terrain_0/color = Color(0, 0.0666666, 1, 1)
 sources/1 = SubResource("TileSetAtlasSource_k8j73")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vuva3"]
+shader = ExtResource("1_vuva3")
+shader_parameter/outline_color = Color(0, 0, 0, 1)
+shader_parameter/tolerance = 0.1
+shader_parameter/glow_intensity = 0.2
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7rihj"]
 texture = ExtResource("1_k8j73")
@@ -509,19 +528,29 @@ sources/1 = SubResource("TileSetAtlasSource_vuva3")
 
 [node name="Color Level" type="Node2D"]
 
+[node name="BG" type="ColorRect" parent="."]
+offset_left = -519.0
+offset_top = -275.0
+offset_right = 616.0
+offset_bottom = 353.0
+color = Color(0.691357, 0.691357, 0.691357, 1)
+
 [node name="PlatformsRED" type="TileMapLayer" parent="."]
 modulate = Color(1, 0, 0, 1)
+material = SubResource("ShaderMaterial_gqgj8")
 tile_map_data = PackedByteArray("AAADAAEAAQABAAAAAAAEAAEAAQABAAAAAAAFAAEAAQABAAAAAAAHAAAAAQAAAAAAAAAIAAAAAQACAAAAAAAKAP//AQAAAAAAAAALAP//AQABAAAAAAAMAP//AQABAAAAAAANAP//AQACAAAAAAACAAIAAQAAAAIAAAADAAIAAQABAAIAAAAEAAIAAQABAAIAAAAFAAIAAQABAAIAAAACAAEAAQAAAAAAAAAGAAEAAQABAAAAAAAGAAIAAQABAAIAAAAHAAIAAQABAAIAAAAHAAEAAQABAAEAAAAIAAEAAQACAAEAAAAIAAIAAQACAAIAAAAKAAAAAQAAAAIAAAALAAAAAQABAAIAAAAMAAAAAQABAAIAAAANAAAAAQACAAIAAAAHAPz/AQAFAAEAAAAEAPz/AQADAAEAAAAQAP3/AQABAAAAAAARAP3/AQACAAAAAAARAP7/AQACAAIAAAAQAP7/AQABAAIAAAAPAP7/AQAAAAIAAAAPAP3/AQAAAAAAAAATAAIAAQAGAAAAAAATAAMAAQAGAAEAAAATAAQAAQACAAEAAAATAAUAAQACAAIAAAASAAUAAQABAAIAAAASAAQAAQABAAAAAAARAAUAAQABAAIAAAAQAAUAAQABAAIAAAAPAAUAAQABAAIAAAAOAAUAAQABAAIAAAANAAUAAQAAAAIAAAANAAQAAQAAAAAAAAAOAAQAAQABAAAAAAAPAAQAAQABAAAAAAAQAAQAAQABAAAAAAARAAQAAQABAAAAAAAFAPz/AQAEAAEAAAAGAPz/AQAEAAEAAADz/wIAAQADAAEAAAD0/wIAAQAEAAEAAAD1/wIAAQAFAAEAAAA=")
 tile_set = SubResource("TileSet_7rihj")
 
 [node name="PlatformsBLUE" type="TileMapLayer" parent="."]
 modulate = Color(0, 0, 1, 1)
+material = SubResource("ShaderMaterial_k8j73")
 position = Vector2(0, -1)
 tile_map_data = PackedByteArray("AAD+//7/AQADAAAAAAD8//3/AQADAAAAAAD6//z/AQADAAAAAAD2//z/AQADAAAAAAANAPv/AQACAAIAAAAMAPv/AQAAAAIAAAAMAPr/AQAAAAAAAAANAPr/AQACAAAAAAAQAPn/AQAAAAIAAAAQAPj/AQAAAAAAAAARAPj/AQACAAAAAAARAPn/AQACAAIAAADw/wMAAQAFAAEAAADv/wMAAQADAAEAAAA=")
 tile_set = SubResource("TileSet_b1f3j")
 
 [node name="PlatformsGREEN" type="TileMapLayer" parent="."]
 modulate = Color(0, 1, 0, 1)
+material = SubResource("ShaderMaterial_vuva3")
 tile_map_data = PackedByteArray("AAAVAAIAAQAAAAAAAAAWAAIAAQACAAAAAAAWAAMAAQACAAIAAAAVAAMAAQAAAAIAAAD8/wEAAQACAAAAAAD7/wEAAQABAAAAAAD6/wEAAQABAAAAAAD5/wEAAQABAAAAAAD4/wEAAQAAAAAAAAD4/wIAAQAAAAIAAAD5/wIAAQABAAIAAAD6/wIAAQABAAIAAAD7/wIAAQABAAIAAAD8/wIAAQACAAIAAAATAPv/AQAAAAAAAAATAPz/AQAAAAIAAAAUAPz/AQACAAIAAAAUAPv/AQACAAAAAAAWAPv/AQADAAAAAAAIAPz/AQADAAAAAAACAPz/AQAFAAEAAAABAPz/AQADAAEAAAAKAAUAAQACAAIAAAAKAAQAAQACAAAAAAAJAAQAAQAAAAAAAAAJAAUAAQAAAAIAAADx//7/AQAFAAEAAADw//7/AQAEAAEAAADv//7/AQADAAEAAAA=")
 tile_set = SubResource("TileSet_k8j73")
 

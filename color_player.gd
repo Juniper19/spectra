@@ -1,36 +1,42 @@
 extends CharacterBody2D
 
-# Movement settings
+# ---------------- Movement Settings ----------------
 @export var speed: float = 200.0
 @export var jump_force: float = 400.0
 @export var gravity: float = 1000.0
 
-# Color settings
+# ---------------- Color Settings ----------------
 @export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
 var current_color_index: int = 0
 var spawn_position: Vector2
 
-# Color selection UI
+# ---------------- UI & Sprite References ----------------
 var selecting_color := false
 var selected_index := -1
 @onready var color_selector = $"../UI/ColorSelector"
+@onready var sprite: AnimatedSprite2D = $PlayerArt
+@onready var shader_mat: ShaderMaterial = $PlayerArt.material
 
-@onready var sprite: AnimatedSprite2D = $Block
-
-
+# ---------------- Lifecycle ----------------
 func _ready() -> void:
-	sprite.modulate = colors[current_color_index]
+	# Initial shader color setup
+	shader_mat.set_shader_parameter("outline_color", colors[current_color_index])
+	shader_mat.set_shader_parameter("glow_intensity", 0.3)
+
 	update_collision_masks()
 	spawn_position = global_position
 	color_selector.visible = false
-	
-	# Force UI to build its colors immediately on load
+
+	# Initialize UI color wheel
 	color_selector.colors = colors
 	color_selector.highlight(current_color_index)
 
+	# Wait one frame to ensure TileMaps are fully ready before coloring them
+	await get_tree().process_frame
+	update_tile_outlines()
 
 func _physics_process(delta: float) -> void:
-	# gravity
+	# Gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	else:
@@ -41,7 +47,7 @@ func _physics_process(delta: float) -> void:
 		var direction := Input.get_axis("left", "right")
 		velocity.x = direction * speed
 
-		# Flip sprite depending on direction
+		# Flip sprite horizontally
 		if direction != 0:
 			sprite.flip_h = direction < 0
 
@@ -58,17 +64,14 @@ func _physics_process(delta: float) -> void:
 			velocity.y = -jump_force
 
 	else:
-		# While color selector open, slow slightly but keep momentum
+		# While selecting color, keep momentum
 		velocity.x = lerp(velocity.x, 0.0, 0.02)
 
 	move_and_slide()
-
 	handle_color_selector()
 	check_deathpit()
 
-
 # ---------------- Color Selector Logic ----------------
-
 func handle_color_selector() -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		selecting_color = true
@@ -96,30 +99,54 @@ func handle_color_selector() -> void:
 		Engine.time_scale = 1.0
 
 
+# ---------------- Color Handling ----------------
 func _apply_color(index: int) -> void:
 	current_color_index = index
-	sprite.modulate = colors[index]
 	update_collision_masks()
 	play_color_swap_effect(colors[index])
-	
+
+	# update player outline color
+	shader_mat.set_shader_parameter("outline_color", colors[index])
+
+	# update tile outlines to match
+	update_tile_outlines()
+
+
 func play_color_swap_effect(new_color: Color) -> void:
 	var tween := create_tween()
-	tween.set_ignore_time_scale(true) 
+	tween.set_ignore_time_scale(true)
 
-	# quick squash & stretch
+	# Squash & stretch animation
 	tween.tween_property(sprite, "scale", Vector2(0.8, 1.2), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2(1.2, 0.8), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.05).set_trans(Tween.TRANS_SINE)
 
-	# apply new color midway through
-	await get_tree().create_timer(0.075, false, true).timeout  # ignores time scale
-	sprite.modulate = new_color
+	await get_tree().create_timer(0.075, false, true).timeout
+	shader_mat.set_shader_parameter("outline_color", new_color)
+	update_tile_outlines()
+
+
+# ---------------- Tile Outline Update ----------------
+func update_tile_outlines() -> void:
+	for tilemap_name in ["PlatformsRED", "PlatformsGREEN", "PlatformsBLUE", "PlatformsWHITE"]:
+		if has_node("../" + tilemap_name):
+			var tm = get_node("../" + tilemap_name)
+			if tm.material is ShaderMaterial:
+				match tilemap_name:
+					"PlatformsRED":
+						tm.material.set_shader_parameter("outline_color", Color.RED)
+					"PlatformsGREEN":
+						tm.material.set_shader_parameter("outline_color", Color.GREEN)
+					"PlatformsBLUE":
+						tm.material.set_shader_parameter("outline_color", Color.BLUE)
+					"PlatformsWHITE":
+						tm.material.set_shader_parameter("outline_color", Color.WHITE)
+
 
 
 # ---------------- Collision Masks ----------------
-
 func update_collision_masks() -> void:
-	set_collision_mask_value(1, true) # white
+	set_collision_mask_value(1, true)  # white
 	set_collision_mask_value(2, false) # red
 	set_collision_mask_value(3, false) # blue
 	set_collision_mask_value(4, false) # green
@@ -134,7 +161,6 @@ func update_collision_masks() -> void:
 
 
 # ---------------- Death Logic ----------------
-
 func check_deathpit() -> void:
 	for i in range(get_slide_collision_count()):
 		var collision = get_slide_collision(i)
