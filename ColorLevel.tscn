@@ -1,10 +1,13 @@
-[gd_scene load_steps=19 format=4 uid="uid://d0iu3lby11od6"]
+[gd_scene load_steps=21 format=4 uid="uid://d0iu3lby11od6"]
 
 [ext_resource type="PackedScene" uid="uid://cn2f1c4k0n7tl" path="res://MyPlayer.tscn" id="1_53qy8"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Art/TilesBasic.png" id="1_k8j73"]
 [ext_resource type="Shader" uid="uid://d0no8jpugg18o" path="res://TileShader.gdshader" id="1_vuva3"]
 [ext_resource type="Texture2D" uid="uid://br2w5hknylhm2" path="res://assets/GraySquare16.png" id="3_b1f3j"]
 [ext_resource type="PackedScene" uid="uid://8k0wbie5ewlm" path="res://ColorSelector.tscn" id="4_7rihj"]
+[ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Art/Paper3.png" id="5_vuva3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yh60g"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_gqgj8"]
 shader = ExtResource("1_vuva3")
@@ -528,12 +531,13 @@ sources/1 = SubResource("TileSetAtlasSource_vuva3")
 
 [node name="Color Level" type="Node2D"]
 
-[node name="BG" type="ColorRect" parent="."]
-offset_left = -519.0
-offset_top = -275.0
-offset_right = 616.0
-offset_bottom = 353.0
-color = Color(0.691357, 0.691357, 0.691357, 1)
+[node name="BG" type="Sprite2D" parent="."]
+texture_filter = 1
+texture_repeat = 2
+material = SubResource("ShaderMaterial_yh60g")
+texture = ExtResource("5_vuva3")
+region_enabled = true
+region_rect = Rect2(0, 0, 5000, 5000)
 
 [node name="PlatformsRED" type="TileMapLayer" parent="."]
 modulate = Color(1, 0, 0, 1)
