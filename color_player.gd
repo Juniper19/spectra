@@ -21,7 +21,6 @@ var selected_index := -1
 func _ready() -> void:
 	# Initial shader color setup
 	shader_mat.set_shader_parameter("outline_color", colors[current_color_index])
-	shader_mat.set_shader_parameter("glow_intensity", 0.3)
 
 	update_collision_masks()
 	spawn_position = global_position
@@ -34,6 +33,7 @@ func _ready() -> void:
 	# Wait one frame to ensure TileMaps are fully ready before coloring them
 	await get_tree().process_frame
 	update_tile_outlines()
+
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -103,27 +103,25 @@ func handle_color_selector() -> void:
 func _apply_color(index: int) -> void:
 	current_color_index = index
 	update_collision_masks()
-	play_color_swap_effect(colors[index])
 
-	# update player outline color
+	# update player outline color instantly
 	shader_mat.set_shader_parameter("outline_color", colors[index])
 
-	# update tile outlines to match
+	# trigger the bounce effect
+	play_color_swap_effect()
+
+	# keep tile outlines fixed
 	update_tile_outlines()
 
 
-func play_color_swap_effect(new_color: Color) -> void:
+func play_color_swap_effect() -> void:
 	var tween := create_tween()
 	tween.set_ignore_time_scale(true)
 
-	# Squash & stretch animation
+	# Simple bounce / squash & stretch
 	tween.tween_property(sprite, "scale", Vector2(0.8, 1.2), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2(1.2, 0.8), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.05).set_trans(Tween.TRANS_SINE)
-
-	await get_tree().create_timer(0.075, false, true).timeout
-	shader_mat.set_shader_parameter("outline_color", new_color)
-	update_tile_outlines()
 
 
 # ---------------- Tile Outline Update ----------------
@@ -141,7 +139,6 @@ func update_tile_outlines() -> void:
 						tm.material.set_shader_parameter("outline_color", Color.BLUE)
 					"PlatformsWHITE":
 						tm.material.set_shader_parameter("outline_color", Color.WHITE)
-
 
 
 # ---------------- Collision Masks ----------------
