@@ -107,6 +107,9 @@ func handle_color_selector() -> void:
 func _apply_color(index: int) -> void:
 	current_color_index = index
 	update_collision_masks()
+	
+	# momentum bounce!! IMPORTANT!! without this, you freeze inside tiles
+	push_out_of_tiles()
 
 	# update player outline color instantly
 	shader_mat.set_shader_parameter("outline_color", colors[index])
@@ -139,11 +142,62 @@ func add_new_color(new_color: Color) -> void:
 	# Update UI and visuals
 	color_selector.colors = colors
 	print("New color unlocked:", new_color)
+	print("Total colors:", colors)
 
-	# Optional: Add a small effect
+	# little bounce effect
 	var tween := create_tween()
 	tween.tween_property(sprite, "scale", Vector2(1.3, 1.3), 0.1)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.1)
+
+func push_out_of_tiles() -> void:
+	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+
+	var params := PhysicsShapeQueryParameters2D.new()
+	params.shape_rid = $CollisionShape2D.shape.get_rid()
+	params.collision_mask = get_collision_mask()
+	params.collide_with_bodies = true
+	params.collide_with_areas = false
+	params.exclude = [self]
+
+	const MAX_PUSH: float = 48.0
+	const STEP: float = 2.0
+	const BOUNCE: float = 900.0
+	const EPS: float = 0.5
+
+	params.transform = Transform2D(0.0, global_position)
+	var hits: Array = space_state.intersect_shape(params, 8)
+	if hits.is_empty():
+		return
+
+	var dirs: Array[Vector2] = [
+		Vector2.RIGHT, Vector2.LEFT, Vector2.DOWN, Vector2.UP,
+		Vector2(1, 1).normalized(), Vector2(-1, 1).normalized(),
+		Vector2(1, -1).normalized(), Vector2(-1, -1).normalized()
+	]
+
+	var best_dir: Vector2 = Vector2.ZERO
+	var best_dist: float = INF
+
+	for d in dirs:
+		var dist: float = 0.0
+		while dist <= MAX_PUSH:
+			var test_pos: Vector2 = global_position + d * dist
+			params.transform = Transform2D(0.0, test_pos)
+			var overlap: Array = space_state.intersect_shape(params, 1)
+			if overlap.is_empty():
+				if dist < best_dist:
+					best_dist = dist
+					best_dir = d
+				break
+			dist += STEP
+
+	if best_dir != Vector2.ZERO and best_dist < INF:
+		global_position += best_dir * (best_dist + EPS)
+
+		var depth_ratio: float = clampf((MAX_PUSH - best_dist) / MAX_PUSH, 0.0, 1.0)
+		var impulse: Vector2 = best_dir * BOUNCE * depth_ratio
+		velocity += impulse
+
 
 # ---------------- Tile Outline Update ----------------
 func update_tile_outlines() -> void:
