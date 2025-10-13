@@ -52,13 +52,17 @@ func _physics_process(delta: float) -> void:
 			sprite.flip_h = direction < 0
 
 		# --- Animation Logic ---
-		if direction != 0:
-			if sprite.animation != "walk" or not sprite.is_playing():
-				sprite.play("walk")
+		if not is_on_floor():
+			if sprite.animation != "jump" or not sprite.is_playing():
+				sprite.play("jump")
 		else:
-			if sprite.animation != "idle" or not sprite.is_playing():
-				sprite.play("idle")
-
+			if direction != 0:
+				if sprite.animation != "walk" or not sprite.is_playing():
+					sprite.play("walk")
+			else:
+				if sprite.animation != "idle" or not sprite.is_playing():
+					sprite.play("idle")
+					
 		# Jump
 		if Input.is_action_just_pressed("up") and is_on_floor():
 			velocity.y = -jump_force

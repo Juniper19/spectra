@@ -5,7 +5,7 @@
 [ext_resource type="Shader" uid="uid://dn3leypaxl6dy" path="res://MyPlayerShader.gdshader" id="2_giw4r"]
 [ext_resource type="Texture2D" uid="uid://ddeck3dr4blqv" path="res://Art/BluePlayerWalk-Sheet.png" id="3_diq8x"]
 [ext_resource type="Texture2D" uid="uid://t7lri5w63v3k" path="res://Art/BluePlayerIdle-Sheet.png" id="3_kfoje"]
-[ext_resource type="Texture2D" uid="uid://o5fuexgtmjve" path="res://Art/BluePlayerSingle.png" id="4_3d7gm"]
+[ext_resource type="Texture2D" uid="uid://00su0gyvbd28" path="res://Art/BluePlayerJump.png" id="5_giw4r"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3ra7o"]
 shader = ExtResource("2_giw4r")
@@ -110,7 +110,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("4_3d7gm")
+"texture": ExtResource("5_giw4r")
 }],
 "loop": true,
 "name": &"jump",
@@ -196,9 +196,8 @@ gravity = 900.0
 [node name="PlayerArt" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_3ra7o")
 sprite_frames = SubResource("SpriteFrames_diq8x")
-animation = &"walk"
+animation = &"jump"
 autoplay = "idle"
-frame_progress = 0.568758
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_3d7gm")
