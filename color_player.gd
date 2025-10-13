@@ -6,7 +6,7 @@ extends CharacterBody2D
 @export var gravity: float = 1000.0
 
 # ---------------- Color Settings ----------------
-@export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW]
+@export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
 var current_color_index: int = 0
 var spawn_position: Vector2
 
@@ -127,6 +127,23 @@ func play_color_swap_effect() -> void:
 	tween.tween_property(sprite, "scale", Vector2(1.2, 0.8), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.05).set_trans(Tween.TRANS_SINE)
 
+func add_new_color(new_color: Color) -> void:
+	# Check if color already exists
+	for c in colors:
+		if c.is_equal_approx(new_color):
+			return # already have it, ignore
+
+	# Add color to the list
+	colors.append(new_color)
+
+	# Update UI and visuals
+	color_selector.colors = colors
+	print("New color unlocked:", new_color)
+
+	# Optional: Add a small effect
+	var tween := create_tween()
+	tween.tween_property(sprite, "scale", Vector2(1.3, 1.3), 0.1)
+	tween.tween_property(sprite, "scale", Vector2.ONE, 0.1)
 
 # ---------------- Tile Outline Update ----------------
 func update_tile_outlines() -> void:

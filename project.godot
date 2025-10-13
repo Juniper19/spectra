@@ -19,6 +19,11 @@ config/icon="res://icon.svg"
 
 window/stretch/mode="viewport"
 
+[global_group]
+
+stars=""
+player=""
+
 [gui]
 
 theme/custom_font="res://assets/quaver.ttf"
