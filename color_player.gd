@@ -6,7 +6,7 @@ extends CharacterBody2D
 @export var gravity: float = 1000.0
 
 # ---------------- Color Settings ----------------
-@export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
+@export var colors: Array[Color] = [Color.RED, Color.BLUE]
 var current_color_index: int = 0
 var spawn_position: Vector2
 
@@ -227,10 +227,9 @@ func update_collision_masks() -> void:
 
 	match current_color_index:
 		0: set_collision_mask_value(2, true) # red
-		1: set_collision_mask_value(4, true) # green
-		2: set_collision_mask_value(3, true) # blue
+		1: set_collision_mask_value(3, true) # blue
+		2: set_collision_mask_value(4, true) # green
 		3: set_collision_mask_value(5, true) # yellow
-
 
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
