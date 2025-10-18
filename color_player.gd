@@ -19,21 +19,20 @@ var selected_index := -1
 
 # ---------------- Lifecycle ----------------
 func _ready() -> void:
-	# Initial shader color setup
+	# Shader color setup
 	shader_mat.set_shader_parameter("outline_color", colors[current_color_index])
 
 	update_collision_masks()
 	spawn_position = global_position
 	color_selector.visible = false
 
-	# Initialize UI color wheel
+	# UI color wheel
 	color_selector.colors = colors
 	color_selector.highlight(current_color_index)
 
 	# Wait one frame to ensure TileMaps are fully ready before coloring them
 	await get_tree().process_frame
 	update_tile_outlines()
-
 
 func _physics_process(delta: float) -> void:
 	# Gravity
@@ -102,7 +101,6 @@ func handle_color_selector() -> void:
 		color_selector.visible = false
 		Engine.time_scale = 1.0
 
-
 # ---------------- Color Handling ----------------
 func _apply_color(index: int) -> void:
 	current_color_index = index
@@ -120,7 +118,6 @@ func _apply_color(index: int) -> void:
 	# keep tile outlines fixed
 	update_tile_outlines()
 
-
 func play_color_swap_effect() -> void:
 	var tween := create_tween()
 	tween.set_ignore_time_scale(true)
@@ -134,7 +131,7 @@ func add_new_color(new_color: Color) -> void:
 	# Check if color already exists
 	for c in colors:
 		if c.is_equal_approx(new_color):
-			return # already have it, ignore
+			return
 
 	# Add color to the list
 	colors.append(new_color)
@@ -198,7 +195,6 @@ func push_out_of_tiles() -> void:
 		var impulse: Vector2 = best_dir * BOUNCE * depth_ratio
 		velocity += impulse
 
-
 # ---------------- Tile Outline Update ----------------
 func update_tile_outlines() -> void:
 	for tilemap_name in ["PlatformsRED", "PlatformsGREEN", "PlatformsBLUE", "PlatformsWHITE"]:
@@ -215,7 +211,6 @@ func update_tile_outlines() -> void:
 					"PlatformsWHITE":
 						tm.material.set_shader_parameter("outline_color", Color.WHITE)
 
-
 # ---------------- Collision Masks ----------------
 func update_collision_masks() -> void:
 	set_collision_mask_value(1, true)  # white
@@ -231,7 +226,6 @@ func update_collision_masks() -> void:
 		2: set_collision_mask_value(3, true) # blue
 		3: set_collision_mask_value(5, true) # yellow
 
-
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
 	for i in range(get_slide_collision_count()):
@@ -239,7 +233,6 @@ func check_deathpit() -> void:
 		var collider = collision.get_collider()
 		if collider is TileMapLayer and collider.name == "DeathPitLayer":
 			respawn()
-
 
 func respawn() -> void:
 	global_position = spawn_position
