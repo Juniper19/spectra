@@ -212,33 +212,47 @@ func update_tile_outlines() -> void:
 	for i in range(color_names.size()):
 		var name = color_names[i]
 		var node_path = "../Platforms" + name
-		if has_node(node_path):
-			var tm = get_node(node_path)
-			if tm == null:
-				continue
+		if not has_node(node_path):
+			continue
 
-			# Get the color for this layer
-			var color: Color
-			match name:
-				"RED": color = Color.RED
-				"GREEN": color = Color.GREEN
-				"BLUE": color = Color.BLUE
-				"WHITE": color = Color.WHITE
-			if name == "WHITE":
-				continue
-			# If this layer matches the player's color:
-			if i == current_color_index:
-				# Disable shader effect and use modulate instead
-				tm.material = null
-				tm.modulate = color
-			else:
-				# Reapply shader material for outline-only appearance
-				if tm.material == null:
-					var shader_mat = ShaderMaterial.new()
-					shader_mat.shader = preload("res://TileShader.gdshader")
-					tm.material = shader_mat
-				tm.material.set_shader_parameter("outline_color", color)
-				tm.modulate = Color.WHITE
+		var tm = get_node(node_path)
+		if tm == null:
+			continue
+
+		# Assign color based on name
+		var color: Color
+		match name:
+			"RED": color = Color.RED
+			"GREEN": color = Color.GREEN
+			"BLUE": color = Color.BLUE
+			"WHITE": color = Color.WHITE
+
+		# Skip white platforms entirely
+		if name == "WHITE":
+			continue
+
+		# Active layer (matches player color)
+		if i == current_color_index:
+			# Remove shader and smoothly fade modulate to full color
+			tm.material = null
+			var tween := create_tween()
+			tween.set_ignore_time_scale(true)
+			tween.tween_property(tm, "modulate", color, 0.15).set_trans(Tween.TRANS_SINE)
+		
+		# Inactive layers (outline only)
+		else:
+			# If missing material, reapply the shader
+			if tm.material == null:
+				var shader_mat := ShaderMaterial.new()
+				shader_mat.shader = preload("res://TileShader.gdshader")
+				tm.material = shader_mat
+			tm.material.set_shader_parameter("outline_color", color)
+
+			# Smoothly fade back to white (neutral look)
+			var tween := create_tween()
+			tween.set_ignore_time_scale(true)
+			tween.tween_property(tm, "modulate", Color.WHITE, 0.15).set_trans(Tween.TRANS_SINE)
+
 
 # ---------------- Collision Masks ----------------
 func update_collision_masks() -> void:
