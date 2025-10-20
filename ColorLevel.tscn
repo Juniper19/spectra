@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://d0iu3lby11od6"]
+[gd_scene load_steps=23 format=4 uid="uid://d0iu3lby11od6"]
 
 [ext_resource type="PackedScene" uid="uid://cn2f1c4k0n7tl" path="res://MyPlayer.tscn" id="1_53qy8"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Art/TilesBasic.png" id="1_k8j73"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://8k0wbie5ewlm" path="res://ColorSelector.tscn" id="4_7rihj"]
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Art/Paper3.png" id="5_vuva3"]
 [ext_resource type="PackedScene" uid="uid://dufa28p2oaul2" path="res://star.tscn" id="7_gqgj8"]
+[ext_resource type="PackedScene" uid="uid://c4yaiu3ynvuar" path="res://level_door.tscn" id="8_yh60g"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yh60g"]
 
@@ -581,3 +582,13 @@ offset_bottom = 80.0
 [node name="Star" parent="." instance=ExtResource("7_gqgj8")]
 modulate = Color(1, 1, 0, 1)
 position = Vector2(53, -2)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+position = Vector2(-97, -15)
+
+[node name="FromLobby" type="Node2D" parent="SpawnPoints"]
+
+[node name="LevelDoor" parent="." instance=ExtResource("8_yh60g")]
+position = Vector2(-181, 61)
+target_scene = "uid://bss8t3wlhs8ah"
+spawn_point_name = "FromLevel1"

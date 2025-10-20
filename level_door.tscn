@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://c4yaiu3ynvuar"]
+
+[ext_resource type="Script" uid="uid://ce3u0hm8uxe00" path="res://level_door.gd" id="1_fbrah"]
+[ext_resource type="Texture2D" uid="uid://cx1d8qdynlkyx" path="res://Art/Cork.png" id="2_s1kbv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fbrah"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e2kuh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_s1kbv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="LevelDoor" type="Area2D"]
+collision_mask = 15
+script = ExtResource("1_fbrah")
+target_scene = "uid://d0iu3lby11od6"
+spawn_point_name = "FromLobby"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_fbrah")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-4.76837e-07, 2)
+scale = Vector2(0.0273438, 0.0335295)
+sprite_frames = SubResource("SpriteFrames_e2kuh")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 16.0

@@ -23,7 +23,18 @@ func _ready() -> void:
 	shader_mat.set_shader_parameter("outline_color", colors[current_color_index])
 
 	update_collision_masks()
-	spawn_position = global_position
+
+	# Check if a door set a spawn point
+	var spawn_name = get_tree().root.get_meta("next_spawn_point") if get_tree().root.has_meta("next_spawn_point") else null
+	if spawn_name:
+		var spawn_node = get_tree().current_scene.get_node_or_null("SpawnPoints/" + str(spawn_name))
+		if spawn_node:
+			global_position = spawn_node.global_position
+			spawn_position = global_position
+		get_tree().root.remove_meta("next_spawn_point") # clear it after use
+	else:
+		spawn_position = global_position
+
 	color_selector.visible = false
 
 	# UI color wheel

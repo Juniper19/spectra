@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=4 uid="uid://bss8t3wlhs8ah"]
+[gd_scene load_steps=9 format=4 uid="uid://bss8t3wlhs8ah"]
 
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Art/Paper3.png" id="1_ll2xe"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Art/TilesBasic.png" id="2_2wvic"]
 [ext_resource type="PackedScene" uid="uid://cn2f1c4k0n7tl" path="res://MyPlayer.tscn" id="3_tftiq"]
 [ext_resource type="PackedScene" uid="uid://8k0wbie5ewlm" path="res://ColorSelector.tscn" id="4_tftiq"]
+[ext_resource type="PackedScene" uid="uid://c4yaiu3ynvuar" path="res://level_door.tscn" id="5_1gg6n"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xrgmn"]
 
@@ -145,6 +146,7 @@ tile_map_data = PackedByteArray("AAD5/wIAAQAEAAEAAAD6/wIAAQAEAAEAAAD7/wIAAQAEAAE
 tile_set = SubResource("TileSet_x4164")
 
 [node name="MyPlayer" parent="." instance=ExtResource("3_tftiq")]
+position = Vector2(40, 10)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -153,3 +155,12 @@ offset_left = -20.0
 offset_top = -20.0
 offset_right = 380.0
 offset_bottom = 80.0
+
+[node name="LevelDoor" parent="." instance=ExtResource("5_1gg6n")]
+position = Vector2(74, 12)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+position = Vector2(0, 1)
+
+[node name="FromLevel1" type="Node2D" parent="SpawnPoints"]
+position = Vector2(-97, 13)
