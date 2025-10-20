@@ -104,19 +104,23 @@ func highlight(index: int) -> void:
 
 	queue_redraw()
 
-
 func _process(_delta: float) -> void:
-	var cam: Camera2D = get_meta("camera", null)
-	if cam:
-		var player := cam.get_parent() as Node2D
-		if player:
-			# World → Screen using the active canvas transform (includes Camera2D)
-			var vp: Viewport = get_viewport()
-			var xform: Transform2D = vp.get_canvas_transform()
-			var screen_pos: Vector2 = xform * player.global_position
+	if not has_meta("camera"):
+		return
 
-			# Place the bar centered above the player
-			position = screen_pos - Vector2(size.x / 2.0, size.y + 80.0)
+	var cam: Camera2D = get_meta("camera")
+	if cam == null:
+		return
+
+	var player := cam.get_parent() as Node2D
+	if player:
+		# World → Screen using the active canvas transform (includes Camera2D)
+		var vp: Viewport = get_viewport()
+		var xform: Transform2D = vp.get_canvas_transform()
+		var screen_pos: Vector2 = xform * player.global_position
+
+		# Place the bar centered above the player
+		position = screen_pos - Vector2(size.x / 2.0, size.y + 80.0)
 
 func _make_outline_material(outline_color: Color, thickness: float) -> ShaderMaterial:
 	var shader := Shader.new()

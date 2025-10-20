@@ -32,5 +32,9 @@ scale = Vector2(0.0273438, 0.0335295)
 sprite_frames = SubResource("SpriteFrames_e2kuh")
 
 [node name="Label" type="Label" parent="."]
-offset_right = 40.0
-offset_bottom = 16.0
+offset_left = -23.0
+offset_top = -27.0
+offset_right = 25.0
+offset_bottom = -11.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Enter"
