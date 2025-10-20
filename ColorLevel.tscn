@@ -592,3 +592,4 @@ position = Vector2(-97, -15)
 position = Vector2(-181, 61)
 target_scene = "uid://bss8t3wlhs8ah"
 spawn_point_name = "FromLevel1"
+prompt_text = "↑ Lobby"

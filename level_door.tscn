@@ -19,8 +19,6 @@ animations = [{
 [node name="LevelDoor" type="Area2D"]
 collision_mask = 15
 script = ExtResource("1_fbrah")
-target_scene = "uid://d0iu3lby11od6"
-spawn_point_name = "FromLobby"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
