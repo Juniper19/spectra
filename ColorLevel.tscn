@@ -567,6 +567,7 @@ tile_map_data = PackedByteArray("AAD//wEAAQAAAAAAAAAAAAEAAQACAAAAAAD//wIAAQAAAAI
 tile_set = SubResource("TileSet_vuva3")
 
 [node name="MyPlayer" parent="." instance=ExtResource("1_53qy8")]
+position = Vector2(-219, 62)
 
 [node name="DeathPitLayer" type="TileMapLayer" parent="."]
 visible = false
@@ -599,8 +600,8 @@ prompt_text = "↑ Lobby"
 [node name="TimerUI" parent="." instance=ExtResource("9_62hc3")]
 
 [node name="TimerEnd" parent="." instance=ExtResource("10_i6vb4")]
-position = Vector2(127, -8)
+position = Vector2(177, -25)
 is_start = false
 
 [node name="TimerStart" parent="." instance=ExtResource("10_i6vb4")]
-position = Vector2(87, -3)
+position = Vector2(-133, 70)

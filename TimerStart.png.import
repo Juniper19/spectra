@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://s18rc3n4xyu6"
-path="res://.godot/imported/coins_hud.png-2c9e2525048b4eec38228aa66f17c51f.ctex"
+path="res://.godot/imported/TimerStart.png-888760d57b77fe9b8f506ec73d68bd59.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/platformer_metroidvania asset pack v1.01/hud elements/coins_hud.png"
-dest_files=["res://.godot/imported/coins_hud.png-2c9e2525048b4eec38228aa66f17c51f.ctex"]
+source_file="res://TimerStart.png"
+dest_files=["res://.godot/imported/TimerStart.png-888760d57b77fe9b8f506ec73d68bd59.ctex"]
 
 [params]
 

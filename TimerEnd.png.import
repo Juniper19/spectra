@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cg32mkrdk3rlc"
-path="res://.godot/imported/orbs_hud.png-5157379a2bac24ae512f519e58aff8f4.ctex"
+path="res://.godot/imported/TimerEnd.png-6f6511f729eb9b224b038202574b02d5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/platformer_metroidvania asset pack v1.01/hud elements/orbs_hud.png"
-dest_files=["res://.godot/imported/orbs_hud.png-5157379a2bac24ae512f519e58aff8f4.ctex"]
+source_file="res://TimerEnd.png"
+dest_files=["res://.godot/imported/TimerEnd.png-6f6511f729eb9b224b038202574b02d5.ctex"]
 
 [params]
 
