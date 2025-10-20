@@ -145,7 +145,7 @@ shader_parameter/outline_color = Color(0, 0, 0, 1)
 shader_parameter/tolerance = 0.1
 shader_parameter/glow_intensity = 0.2
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k8j73"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yh60g"]
 texture = ExtResource("1_k8j73")
 0:0/0 = 0
 0:0/0/terrain_set = 0
@@ -266,7 +266,7 @@ physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Blocks"
 terrain_set_0/terrain_0/color = Color(0, 0.0666666, 1, 1)
-sources/1 = SubResource("TileSetAtlasSource_k8j73")
+sources/1 = SubResource("TileSetAtlasSource_yh60g")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vuva3"]
 shader = ExtResource("1_vuva3")
@@ -274,7 +274,7 @@ shader_parameter/outline_color = Color(0, 0, 0, 1)
 shader_parameter/tolerance = 0.1
 shader_parameter/glow_intensity = 0.2
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7rihj"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_62hc3"]
 texture = ExtResource("1_k8j73")
 0:0/0 = 0
 0:0/0/terrain_set = 0
@@ -395,9 +395,9 @@ physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Blocks"
 terrain_set_0/terrain_0/color = Color(0.212701, 0.434307, 0.268281, 1)
-sources/1 = SubResource("TileSetAtlasSource_7rihj")
+sources/1 = SubResource("TileSetAtlasSource_62hc3")
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yh60g"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i6vb4"]
 texture = ExtResource("1_k8j73")
 0:0/0 = 0
 0:0/0/terrain_set = 0
@@ -518,7 +518,7 @@ physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Blocks"
 terrain_set_0/terrain_0/color = Color(0, 0, 0, 1)
-sources/1 = SubResource("TileSetAtlasSource_yh60g")
+sources/1 = SubResource("TileSetAtlasSource_i6vb4")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vuva3"]
 texture = ExtResource("3_b1f3j")
