@@ -160,6 +160,7 @@ offset_bottom = 80.0
 position = Vector2(74, 12)
 target_scene = "uid://d0iu3lby11od6"
 spawn_point_name = "FromLobby"
+prompt_text = "↑ Level 1"
 
 [node name="SpawnPoints" type="Node2D" parent="."]
 position = Vector2(0, 1)

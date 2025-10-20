@@ -208,19 +208,37 @@ func push_out_of_tiles() -> void:
 
 # ---------------- Tile Outline Update ----------------
 func update_tile_outlines() -> void:
-	for tilemap_name in ["PlatformsRED", "PlatformsGREEN", "PlatformsBLUE", "PlatformsWHITE"]:
-		if has_node("../" + tilemap_name):
-			var tm = get_node("../" + tilemap_name)
-			if tm.material is ShaderMaterial:
-				match tilemap_name:
-					"PlatformsRED":
-						tm.material.set_shader_parameter("outline_color", Color.RED)
-					"PlatformsGREEN":
-						tm.material.set_shader_parameter("outline_color", Color.GREEN)
-					"PlatformsBLUE":
-						tm.material.set_shader_parameter("outline_color", Color.BLUE)
-					"PlatformsWHITE":
-						tm.material.set_shader_parameter("outline_color", Color.WHITE)
+	var color_names = ["RED", "GREEN", "BLUE", "WHITE"]
+	for i in range(color_names.size()):
+		var name = color_names[i]
+		var node_path = "../Platforms" + name
+		if has_node(node_path):
+			var tm = get_node(node_path)
+			if tm == null:
+				continue
+
+			# Get the color for this layer
+			var color: Color
+			match name:
+				"RED": color = Color.RED
+				"GREEN": color = Color.GREEN
+				"BLUE": color = Color.BLUE
+				"WHITE": color = Color.WHITE
+			if name == "WHITE":
+				continue
+			# If this layer matches the player's color:
+			if i == current_color_index:
+				# Disable shader effect and use modulate instead
+				tm.material = null
+				tm.modulate = color
+			else:
+				# Reapply shader material for outline-only appearance
+				if tm.material == null:
+					var shader_mat = ShaderMaterial.new()
+					shader_mat.shader = preload("res://TileShader.gdshader")
+					tm.material = shader_mat
+				tm.material.set_shader_parameter("outline_color", color)
+				tm.modulate = Color.WHITE
 
 # ---------------- Collision Masks ----------------
 func update_collision_masks() -> void:

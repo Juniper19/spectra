@@ -2,7 +2,7 @@ extends Area2D
 
 @export_file("*.tscn") var target_scene: String
 @export var spawn_point_name: String = ""
-@export var prompt_text: String = "↑ Enter"  # custom text shown above the door
+@export var prompt_text: String = "↑ Enter"
 
 var player_in_range: Node = null
 @onready var prompt_label: Label = $Label
@@ -11,7 +11,7 @@ func _ready() -> void:
 	# set label text dynamically
 	prompt_label.text = prompt_text
 	prompt_label.visible = false
-	prompt_label.modulate.a = 0.0  # start fully transparent
+	prompt_label.modulate.a = 0.0
 
 	connect("body_entered", Callable(self, "_on_body_entered"))
 	connect("body_exited", Callable(self, "_on_body_exited"))
