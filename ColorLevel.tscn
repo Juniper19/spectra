@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://d0iu3lby11od6"]
+[gd_scene load_steps=25 format=4 uid="uid://d0iu3lby11od6"]
 
 [ext_resource type="PackedScene" uid="uid://cn2f1c4k0n7tl" path="res://MyPlayer.tscn" id="1_53qy8"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Art/TilesBasic.png" id="1_k8j73"]
@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Art/Paper3.png" id="5_vuva3"]
 [ext_resource type="PackedScene" uid="uid://dufa28p2oaul2" path="res://star.tscn" id="7_gqgj8"]
 [ext_resource type="PackedScene" uid="uid://c4yaiu3ynvuar" path="res://level_door.tscn" id="8_yh60g"]
+[ext_resource type="PackedScene" uid="uid://cktt0exc2nug1" path="res://timer_ui.tscn" id="9_62hc3"]
+[ext_resource type="PackedScene" uid="uid://dpwf30wtv44ym" path="res://timer_controller.tscn" id="10_i6vb4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yh60g"]
 
@@ -589,7 +591,16 @@ position = Vector2(-97, -15)
 [node name="FromLobby" type="Node2D" parent="SpawnPoints"]
 
 [node name="LevelDoor" parent="." instance=ExtResource("8_yh60g")]
-position = Vector2(-181, 61)
+position = Vector2(-179, 65)
 target_scene = "uid://bss8t3wlhs8ah"
 spawn_point_name = "FromLevel1"
 prompt_text = "↑ Lobby"
+
+[node name="TimerUI" parent="." instance=ExtResource("9_62hc3")]
+
+[node name="TimerEnd" parent="." instance=ExtResource("10_i6vb4")]
+position = Vector2(127, -8)
+is_start = false
+
+[node name="TimerStart" parent="." instance=ExtResource("10_i6vb4")]
+position = Vector2(87, -3)

@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://cktt0exc2nug1"]
+
+[ext_resource type="Script" uid="uid://d3drt4okou85r" path="res://timer_ui.gd" id="1_40xfn"]
+
+[node name="TimerUI" type="CanvasLayer"]
+
+[node name="TimerUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+grow_horizontal = 2
+script = ExtResource("1_40xfn")
+
+[node name="TimerLabel" type="Label" parent="TimerUI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -42.0
+offset_top = 33.0
+offset_right = 43.0
+offset_bottom = 73.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 40
+text = "0.00"
+horizontal_alignment = 1

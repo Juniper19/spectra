@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpwf30wtv44ym"]
+
+[ext_resource type="Script" uid="uid://deaflttpa3g1m" path="res://timer_controller.gd" id="1_odoqq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r7tjk"]
+
+[node name="TimerController" type="Area2D"]
+collision_mask = 255
+script = ExtResource("1_odoqq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_r7tjk")
