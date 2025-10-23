@@ -136,7 +136,7 @@ var mouse_start_position: Vector2
 var drag_threshold: float = 30.0  # how far you must drag before it counts
 
 func _unhandled_input(event: InputEvent) -> void:
-	# --- Right mouse pressed ---
+	# --- Right mouse button pressed ---
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed and not mouse_selecting:
 			mouse_selecting = true
@@ -160,7 +160,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			selecting_color = false
 			color_selector.visible = false
 			Engine.time_scale = 1.0
-			_apply_color(selected_index)
 
 	# --- While dragging ---
 	elif event is InputEventMouseMotion and mouse_selecting:
@@ -171,6 +170,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if new_index != selected_index and new_index < colors.size():
 				selected_index = new_index
 				color_selector.highlight(selected_index)
+				_apply_color(selected_index)  # <--- applies instantly
 
 func _direction_to_index(angle: float) -> int:
 	var drag_dir := Vector2(cos(angle), sin(angle))
