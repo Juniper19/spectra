@@ -17,26 +17,27 @@ func _ready() -> void:
 	queue_redraw()
 	
 func _refresh_colors() -> void:
-	# Clear arrays & children
 	swatch_panels.clear()
 	swatch_boxes.clear()
 
-	var hbox := $"HBoxContainer"
-	for child in hbox.get_children():
+	# Remove old children
+	for child in get_children():
 		child.queue_free()
 
-	# Give some horizontal breathing room between panels
-	hbox.add_theme_constant_override("separation", 8)
+	var radius := 80.0  # distance from center
+	var angles := [
+		deg_to_rad(-90),  # up
+		deg_to_rad(0),    # right
+		deg_to_rad(90),   # down
+		deg_to_rad(180)   # left
+	]
 
-	# Build a panel per color using StyleBoxFlat
 	for i in range(colors.size()):
 		var panel := Panel.new()
 		panel.name = "Color_%d" % i
 		panel.custom_minimum_size = Vector2(64, 64)
+		panel.pivot_offset = panel.custom_minimum_size / 2.0
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		panel.pivot_offset = panel.custom_minimum_size / 2.0  # center scaling
-		panel.add_theme_constant_override("margin_left", 4)
-		panel.add_theme_constant_override("margin_right", 4)
 
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = colors[i]
@@ -44,23 +45,27 @@ func _refresh_colors() -> void:
 		sb.corner_radius_top_right = 8
 		sb.corner_radius_bottom_left = 8
 		sb.corner_radius_bottom_right = 8
+		sb.border_color = Color(0, 0, 0, 0)
 		sb.border_width_left = 2
 		sb.border_width_right = 2
 		sb.border_width_top = 2
 		sb.border_width_bottom = 2
-		sb.border_color = Color(0, 0, 0, 0) # invisible by default
 
 		panel.add_theme_stylebox_override("panel", sb)
-		hbox.add_child(panel)
 
+		add_child(panel)
 		swatch_panels.append(panel)
 		swatch_boxes.append(sb)
 
-	# Initialize highlight state
+		# Explicitly type the angle
+		var angle: float = angles[i % angles.size()]
+		# Center around this Control node’s midpoint
+		var center := size / 2.0
+		panel.position = center + Vector2(cos(angle), sin(angle)) * radius - panel.custom_minimum_size / 2.0
+
 	if selected_index < 0:
 		selected_index = 0
 	highlight(selected_index)
-
 
 func highlight(index: int) -> void:
 	if colors.is_empty():
@@ -120,7 +125,7 @@ func _process(_delta: float) -> void:
 		var screen_pos: Vector2 = xform * player.global_position
 
 		# Place the bar centered above the player
-		position = screen_pos - Vector2(size.x / 2.0, size.y + 80.0)
+		position = screen_pos - size / 2.0
 
 func _make_outline_material(outline_color: Color, thickness: float) -> ShaderMaterial:
 	var shader := Shader.new()
@@ -158,3 +163,21 @@ func _adaptive_outline(c: Color) -> Color:
 	else:
 		# if color is dark (like red/blue), lighten
 		return c.lightened(0.4)
+
+func animate_open(is_opening: bool) -> void:
+	if swatch_panels.is_empty():
+		return
+
+	var base_radius := 80.0
+	for i in range(swatch_panels.size()):
+		var panel := swatch_panels[i]
+		var angle := atan2(panel.position.y - size.y / 2.0, panel.position.x - size.x / 2.0)
+		var target_radius := base_radius if is_opening else 0.0
+
+		var tween := create_tween().set_ignore_time_scale(true)
+		tween.tween_property(
+			panel,
+			"position",
+			size / 2.0 + Vector2(cos(angle), sin(angle)) * target_radius - panel.custom_minimum_size / 2.0,
+			0.18
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)

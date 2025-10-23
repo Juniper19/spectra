@@ -143,12 +143,19 @@ func handle_color_selector() -> void:
 		Engine.time_scale = 0.2
 
 	if selecting_color:
-		if Input.is_action_just_pressed("left"):
-			selected_index = (selected_index - 1 + colors.size()) % colors.size()
-			color_selector.highlight(selected_index)
-			_apply_color(selected_index)
-		elif Input.is_action_just_pressed("right"):
-			selected_index = (selected_index + 1) % colors.size()
+		var new_index := selected_index
+
+		if Input.is_action_just_pressed("up") and colors.size() > 0:
+			new_index = 0
+		elif Input.is_action_just_pressed("right") and colors.size() > 1:
+			new_index = 1
+		elif Input.is_action_just_pressed("down") and colors.size() > 2:
+			new_index = 2
+		elif Input.is_action_just_pressed("left") and colors.size() > 3:
+			new_index = 3
+
+		if new_index != selected_index:
+			selected_index = new_index
 			color_selector.highlight(selected_index)
 			_apply_color(selected_index)
 
