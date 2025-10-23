@@ -162,8 +162,17 @@ target_scene = "uid://d0iu3lby11od6"
 spawn_point_name = "FromLobby"
 prompt_text = "↑ Level 1"
 
+[node name="LevelDoor2" parent="." instance=ExtResource("5_1gg6n")]
+position = Vector2(138, 14)
+target_scene = "uid://dfx1wjg1peb0w"
+spawn_point_name = "FromLevel2"
+prompt_text = "↑ Level 2"
+
 [node name="SpawnPoints" type="Node2D" parent="."]
 position = Vector2(0, 1)
 
+[node name="FromLevel2" type="Node2D" parent="SpawnPoints"]
+position = Vector2(138, 15)
+
 [node name="FromLevel1" type="Node2D" parent="SpawnPoints"]
-position = Vector2(-97, 13)
+position = Vector2(74, 15)
