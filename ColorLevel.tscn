@@ -581,7 +581,6 @@ offset_left = -20.0
 offset_top = -20.0
 offset_right = 380.0
 offset_bottom = 80.0
-colors = Array[Color]([])
 
 [node name="Star" parent="." instance=ExtResource("7_gqgj8")]
 modulate = Color(1, 1, 0, 1)

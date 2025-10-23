@@ -127,42 +127,79 @@ func _physics_process(delta: float) -> void:
 		velocity.x = lerp(velocity.x, 0.0, 0.02)
 
 	move_and_slide()
-	handle_color_selector()
 	check_deathpit()
 
 # ---------------- Color Selector Logic ----------------
-func handle_color_selector() -> void:
-	if Input.is_action_just_pressed("ui_accept"):
-		selecting_color = true
-		selected_index = current_color_index
-		color_selector.visible = true
-		color_selector.colors = colors
-		color_selector.set_meta("camera", $Camera2D)
-		await get_tree().process_frame
-		color_selector.highlight(selected_index)
-		Engine.time_scale = 0.2
+var mouse_selecting := false
+var mouse_center: Vector2
+var mouse_start_position: Vector2
+var drag_threshold: float = 30.0  # how far you must drag before it counts
 
-	if selecting_color:
-		var new_index := selected_index
+func _unhandled_input(event: InputEvent) -> void:
+	# --- Right mouse pressed ---
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed and not mouse_selecting:
+			mouse_selecting = true
+			selecting_color = true
+			selected_index = current_color_index
 
-		if Input.is_action_just_pressed("up") and colors.size() > 0:
-			new_index = 0
-		elif Input.is_action_just_pressed("right") and colors.size() > 1:
-			new_index = 1
-		elif Input.is_action_just_pressed("down") and colors.size() > 2:
-			new_index = 2
-		elif Input.is_action_just_pressed("left") and colors.size() > 3:
-			new_index = 3
+			# Store where drag starts (mouse position in viewport)
+			mouse_start_position = event.position
 
-		if new_index != selected_index:
-			selected_index = new_index
+			# Show selector and slow time
+			color_selector.visible = true
+			color_selector.colors = colors
+			color_selector.set_meta("camera", $Camera2D)
+			await get_tree().process_frame
 			color_selector.highlight(selected_index)
+			Engine.time_scale = 0.2
+
+		elif not event.pressed and mouse_selecting:
+			# --- Right mouse released ---
+			mouse_selecting = false
+			selecting_color = false
+			color_selector.visible = false
+			Engine.time_scale = 1.0
 			_apply_color(selected_index)
 
-	if Input.is_action_just_released("ui_accept"):
-		selecting_color = false
-		color_selector.visible = false
-		Engine.time_scale = 1.0
+	# --- While dragging ---
+	elif event is InputEventMouseMotion and mouse_selecting:
+		var delta: Vector2 = event.position - mouse_start_position
+		if delta.length() > drag_threshold:
+			var angle := atan2(delta.y, delta.x)
+			var new_index := _direction_to_index(angle)
+			if new_index != selected_index and new_index < colors.size():
+				selected_index = new_index
+				color_selector.highlight(selected_index)
+
+func _direction_to_index(angle: float) -> int:
+	var drag_dir := Vector2(cos(angle), sin(angle))
+	var dirs := [
+		Vector2(0, -1),  # up
+		Vector2(1, 0),   # right
+		Vector2(0, 1),   # down
+		Vector2(-1, 0)   # left
+	]
+
+	var best_index := 0
+	var best_dot := -INF
+	for i in range(dirs.size()):
+		var dot := drag_dir.dot(dirs[i])
+		if dot > best_dot:
+			best_dot = dot
+			best_index = i
+
+	return best_index
+
+func _get_screen_position(world_pos: Vector2) -> Vector2:
+	var cam: Camera2D = $Camera2D
+	if cam == null:
+		return world_pos
+
+	# Convert world position to screen position in the same space as event.position
+	var viewport := get_viewport()
+	var transform: Transform2D = viewport.get_canvas_transform()
+	return transform * world_pos
 
 # ---------------- Color Handling ----------------
 func _apply_color(index: int) -> void:
