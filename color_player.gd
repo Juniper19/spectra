@@ -10,6 +10,9 @@ extends CharacterBody2D
 var coyote_timer: float = 0.0
 @export var jump_buffer_time: float = 0.1
 var jump_buffer_timer: float = 0.0
+@export var jump_cut_multiplier: float = 0.65
+@export var apex_gravity_scale: float = 0.7   # lower = floatier apex
+@export var apex_threshold: float = 40.0      # smaller = narrower apex zone
 
 # ---------------- Color Settings ----------------
 @export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
@@ -58,12 +61,27 @@ func _physics_process(delta: float) -> void:
 	else:
 		jump_buffer_timer = max(jump_buffer_timer - delta, 0.0)
 
-	# Gravity
+	# ---------------- Gravity, Apex Modifier & Variable Jump ----------------
 	if not is_on_floor():
-		velocity.y += gravity * delta
+		var gravity_force := gravity
+
+		# Apex modifier – lighter gravity near the peak of a jump
+		if abs(velocity.y) < apex_threshold:
+			gravity_force *= apex_gravity_scale
+
+		# Apply stronger gravity when falling
+		if velocity.y > 0:
+			gravity_force *= 1.4
+
+		# Apply total gravity force
+		velocity.y += gravity_force * delta
+
+		# Variable jump height – cut short if jump is released early
+		if velocity.y < 0 and Input.is_action_just_released("up"):
+			velocity.y *= jump_cut_multiplier
 	else:
 		velocity.y = 0
-		
+
 	# ---------------- Coyote Time ----------------
 	if is_on_floor():
 		coyote_timer = coyote_time
@@ -93,12 +111,12 @@ func _physics_process(delta: float) -> void:
 			else:
 				if sprite.animation != "idle" or not sprite.is_playing():
 					sprite.play("idle")
-					
-		# Jump
+
+		# Jump logic (buffer + coyote)
 		if jump_buffer_timer > 0.0 and (is_on_floor() or coyote_timer > 0.0):
 			velocity.y = -jump_force
 			coyote_timer = 0.0
-			jump_buffer_timer = 0.0  # clear both after using
+			jump_buffer_timer = 0.0
 
 			# preserve a bit of momentum boost based on horizontal speed
 			if abs(velocity.x) > speed * 0.8:
