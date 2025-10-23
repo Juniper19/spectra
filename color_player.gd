@@ -1,9 +1,13 @@
 extends CharacterBody2D
 
 # ---------------- Movement Settings ----------------
-@export var speed: float = 200.0
-@export var jump_force: float = 400.0
-@export var gravity: float = 1000.0
+@export var speed: float = 190
+@export var jump_force: float = 420
+@export var gravity: float = 1200
+@export var acceleration: float = 2200
+@export var friction: float = 1600
+@export var coyote_time: float = 0.05
+var coyote_timer: float = 0.0
 
 # ---------------- Color Settings ----------------
 @export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
@@ -51,11 +55,20 @@ func _physics_process(delta: float) -> void:
 		velocity.y += gravity * delta
 	else:
 		velocity.y = 0
+		
+	# ---------------- Coyote Time ----------------
+	if is_on_floor():
+		coyote_timer = coyote_time
+	else:
+		coyote_timer = max(coyote_timer - delta, 0.0)
 
 	# ---------------- Movement ----------------
 	if not selecting_color:
 		var direction := Input.get_axis("left", "right")
-		velocity.x = direction * speed
+		if direction != 0:
+			velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 
 		# Flip sprite horizontally
 		if direction != 0:
@@ -74,8 +87,13 @@ func _physics_process(delta: float) -> void:
 					sprite.play("idle")
 					
 		# Jump
-		if Input.is_action_just_pressed("up") and is_on_floor():
+		if Input.is_action_just_pressed("up") and (is_on_floor() or coyote_timer > 0.0):
 			velocity.y = -jump_force
+			coyote_timer = 0.0
+
+			# preserve a bit of momentum boost based on horizontal speed
+			if abs(velocity.x) > speed * 0.8:
+				velocity.x *= 1.1
 
 	else:
 		# While selecting color, keep momentum

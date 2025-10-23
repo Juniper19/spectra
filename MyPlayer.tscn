@@ -189,9 +189,6 @@ size = Vector2(17, 28)
 [node name="MyPlayer" type="CharacterBody2D" groups=["player"]]
 collision_layer = 2
 script = ExtResource("1_b740q")
-speed = 140.0
-jump_force = 320.0
-gravity = 900.0
 
 [node name="PlayerArt" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_3ra7o")
