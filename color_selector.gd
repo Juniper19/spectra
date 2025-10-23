@@ -17,14 +17,18 @@ func _ready() -> void:
 	queue_redraw()
 	
 func _refresh_colors() -> void:
-	swatch_panels.clear()
-	swatch_boxes.clear()
+	queue_redraw()
+	
+func _draw() -> void:
+	if colors.is_empty():
+		return
 
-	# Remove old children
-	for child in get_children():
-		child.queue_free()
+	var center := size / 2.0
+	var radius := 70.0    # pulled in close
+	var arrow_length := 45.0
+	var arrow_width := 28.0
+	var gap := 15.0       # minimal space between player and arrow base
 
-	var radius := 80.0  # distance from center
 	var angles := [
 		deg_to_rad(-90),  # up
 		deg_to_rad(0),    # right
@@ -33,80 +37,29 @@ func _refresh_colors() -> void:
 	]
 
 	for i in range(colors.size()):
-		var panel := Panel.new()
-		panel.name = "Color_%d" % i
-		panel.custom_minimum_size = Vector2(64, 64)
-		panel.pivot_offset = panel.custom_minimum_size / 2.0
-		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = colors[i]
-		sb.corner_radius_top_left = 8
-		sb.corner_radius_top_right = 8
-		sb.corner_radius_bottom_left = 8
-		sb.corner_radius_bottom_right = 8
-		sb.border_color = Color(0, 0, 0, 0)
-		sb.border_width_left = 2
-		sb.border_width_right = 2
-		sb.border_width_top = 2
-		sb.border_width_bottom = 2
-
-		panel.add_theme_stylebox_override("panel", sb)
-
-		add_child(panel)
-		swatch_panels.append(panel)
-		swatch_boxes.append(sb)
-
-		# Explicitly type the angle
 		var angle: float = angles[i % angles.size()]
-		# Center around this Control node’s midpoint
-		var center := size / 2.0
-		panel.position = center + Vector2(cos(angle), sin(angle)) * radius - panel.custom_minimum_size / 2.0
+		var dir := Vector2(cos(angle), sin(angle))
 
-	if selected_index < 0:
-		selected_index = 0
-	highlight(selected_index)
+		# Tip near the player
+		var tip := center + dir * (radius + arrow_length / 2.0)
+		var base_center := center + dir * (radius - gap)
+
+		var perp := dir.rotated(PI / 2.0) * (arrow_width / 2.0)
+
+		var p1 := tip
+		var p2 := base_center + perp
+		var p3 := base_center - perp
+
+		var c := colors[i]
+		if i == selected_index:
+			c = c.lightened(0.25)
+		else:
+			c = c.darkened(0.35)
+
+		draw_colored_polygon([p1, p2, p3], c)
 
 func highlight(index: int) -> void:
-	if colors.is_empty():
-		return
-
 	selected_index = clamp(index, 0, colors.size() - 1)
-	if swatch_panels.size() != colors.size():
-		return
-
-	for i in range(swatch_panels.size()):
-		var panel := swatch_panels[i]
-		var sb := swatch_boxes[i]
-
-		panel.pivot_offset = panel.size / 2.0
-
-		if i == selected_index:
-			# scale up smoothly
-			var tween_up := create_tween().set_ignore_time_scale(true)
-			tween_up.tween_property(panel, "scale", Vector2(1.25, 1.25), 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-			# color and border update
-			sb.bg_color = colors[i].lightened(0.10)
-			sb.border_width_left = 4
-			sb.border_width_right = 4
-			sb.border_width_top = 4
-			sb.border_width_bottom = 4
-			sb.border_color = _adaptive_outline(colors[i])
-		else:
-			# scale down smoothly
-			var tween_down := create_tween().set_ignore_time_scale(true)
-			tween_down.tween_property(panel, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
-			sb.bg_color = colors[i].darkened(0.20)
-			sb.border_width_left = 2
-			sb.border_width_right = 2
-			sb.border_width_top = 2
-			sb.border_width_bottom = 2
-			sb.border_color = Color(0, 0, 0, 0)
-
-		panel.add_theme_stylebox_override("panel", sb)
-
 	queue_redraw()
 
 func _process(_delta: float) -> void:
