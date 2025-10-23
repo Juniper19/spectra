@@ -8,6 +8,8 @@ extends CharacterBody2D
 @export var friction: float = 1600
 @export var coyote_time: float = 0.05
 var coyote_timer: float = 0.0
+@export var jump_buffer_time: float = 0.1
+var jump_buffer_timer: float = 0.0
 
 # ---------------- Color Settings ----------------
 @export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
@@ -50,6 +52,12 @@ func _ready() -> void:
 	update_tile_outlines()
 
 func _physics_process(delta: float) -> void:
+	# ---------------- Jump Buffer ----------------
+	if Input.is_action_just_pressed("up"):
+		jump_buffer_timer = jump_buffer_time
+	else:
+		jump_buffer_timer = max(jump_buffer_timer - delta, 0.0)
+
 	# Gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
@@ -87,9 +95,10 @@ func _physics_process(delta: float) -> void:
 					sprite.play("idle")
 					
 		# Jump
-		if Input.is_action_just_pressed("up") and (is_on_floor() or coyote_timer > 0.0):
+		if jump_buffer_timer > 0.0 and (is_on_floor() or coyote_timer > 0.0):
 			velocity.y = -jump_force
 			coyote_timer = 0.0
+			jump_buffer_timer = 0.0  # clear both after using
 
 			# preserve a bit of momentum boost based on horizontal speed
 			if abs(velocity.x) > speed * 0.8:
