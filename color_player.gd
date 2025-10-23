@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 # ---------------- Movement Settings ----------------
-@export var speed: float = 190
+@export var speed: float = 165
 @export var jump_force: float = 420
 @export var gravity: float = 1200
 @export var acceleration: float = 2200
