@@ -29,10 +29,12 @@ var selected_index := -1
 # ---------------- Flow Meter ----------------
 var flow_meter: float = 0.0
 @export var flow_gain_rate: float = 1.8     # How quickly flow builds per second
-@export var flow_decay_rate: float = 10    # How quickly it decays when you stop
-@export var max_flow: float = 6           # Cap for flow multiplier
-@export var base_speed: float = 165         # Store original base speed separately
+@export var flow_decay_rate: float = 10.0   # How quickly it decays when you stop
+@export var max_flow: float = 6.0           # Cap for flow multiplier
+@export var base_speed: float = 165.0       # Store original base speed separately
+@export var flow_idle_grace: float = 0.3    # Seconds before decay starts
 
+var flow_idle_timer: float = 0.0            # Tracks idle time before decay
 @onready var vignette_mat: ShaderMaterial = $FlowVisualizer/Vignette.material
 
 # ---------------- Lifecycle ----------------
@@ -115,7 +117,6 @@ func _physics_process(delta: float) -> void:
 			# Only apply friction when no input
 			velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 
-
 		# Flip sprite horizontally
 		if direction != 0:
 			sprite.flip_h = direction < 0
@@ -148,24 +149,30 @@ func _physics_process(delta: float) -> void:
 
 	# ---------------- Flow Meter Logic ----------------
 	var fps := Engine.physics_ticks_per_second
-	var real_delta := (1.0 / fps) if fps > 0 else delta
+	var real_delta: float = (1.0 / fps) if fps > 0 else delta
 
 	if is_on_floor():
-		var dir := Input.get_axis("left", "right")
+		var dir: float = Input.get_axis("left", "right")
 
 		if dir != 0:
-			# Player is moving — increase flow
+			# Player moving — build flow and reset idle timer
+			flow_idle_timer = 0.0
 			flow_meter = clampf(flow_meter + flow_gain_rate * real_delta, 0.0, max_flow)
 		else:
-			# Player is idle — decay flow
-			flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
+			# Player idle — increase idle timer
+			flow_idle_timer += real_delta
+
+			# Only decay after grace period
+			if flow_idle_timer > flow_idle_grace:
+				flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
 
 	# Update speed based on flow
-	var flow_multiplier := 1.0 + (flow_meter / max_flow) * 0.4   # up to +40% speed
+	var flow_multiplier: float = 1.0 + (flow_meter / max_flow) * 0.4
 	speed = base_speed * flow_multiplier
-	print("Flow", flow_meter)
+
 	var vignette_strength: float = flow_meter / max_flow
 	vignette_mat.set_shader_parameter("intensity", vignette_strength)
+
 	
 	move_and_slide()
 	check_deathpit()
