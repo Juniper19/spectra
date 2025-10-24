@@ -26,8 +26,17 @@ var selected_index := -1
 @onready var sprite: AnimatedSprite2D = $PlayerArt
 @onready var shader_mat: ShaderMaterial = $PlayerArt.material
 
+# ---------------- Flow Meter ----------------
+var flow_meter: float = 0.0
+@export var flow_gain_rate: float = 1.8     # How quickly flow builds per second
+@export var flow_decay_rate: float = 10    # How quickly it decays when you stop
+@export var max_flow: float = 6           # Cap for flow multiplier
+@export var base_speed: float = 165         # Store original base speed separately
+
 # ---------------- Lifecycle ----------------
 func _ready() -> void:
+	base_speed = speed
+
 	# Shader color setup
 	shader_mat.set_shader_parameter("outline_color", colors[current_color_index])
 
@@ -125,6 +134,25 @@ func _physics_process(delta: float) -> void:
 	else:
 		# While selecting color, keep momentum
 		velocity.x = lerp(velocity.x, 0.0, 0.02)
+
+	# ---------------- Flow Meter Logic ----------------
+	var fps := Engine.physics_ticks_per_second
+	var real_delta := (1.0 / fps) if fps > 0 else delta
+
+	if is_on_floor():
+		var dir := Input.get_axis("left", "right")
+
+		if dir != 0:
+			# Player is moving — increase flow
+			flow_meter = clampf(flow_meter + flow_gain_rate * real_delta, 0.0, max_flow)
+		else:
+			# Player is idle — decay flow
+			flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
+
+	# Update speed based on flow
+	var flow_multiplier := 1.0 + (flow_meter / max_flow) * 0.4   # up to +40% speed
+	speed = base_speed * flow_multiplier
+	print("Flow", flow_meter)
 
 	move_and_slide()
 	check_deathpit()

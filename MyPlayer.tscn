@@ -190,6 +190,7 @@ size = Vector2(17, 28)
 collision_layer = 2
 script = ExtResource("1_b740q")
 gravity = 1000.0
+coyote_time = 0.08
 
 [node name="PlayerArt" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_3ra7o")
