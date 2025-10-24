@@ -34,6 +34,11 @@ var flow_meter: float = 0.0
 @export var base_speed: float = 165.0       # Store original base speed separately
 @export var flow_idle_grace: float = 0.3    # Seconds before decay starts
 
+# ---------------- Flow Start Delay ----------------
+@export var flow_start_delay: float = 2.0   # seconds before flow starts building
+var flow_timer: float = 0.0
+var flow_enabled: bool = false
+
 var flow_idle_timer: float = 0.0            # Tracks idle time before decay
 @onready var vignette_mat: ShaderMaterial = $FlowVisualizer/Vignette.material
 
@@ -67,7 +72,18 @@ func _ready() -> void:
 	await get_tree().process_frame
 	update_tile_outlines()
 
+	# Flow start delay setup
+	flow_timer = 0.0
+	flow_enabled = false
+
+
 func _physics_process(delta: float) -> void:
+	# ---------------- Flow Start Delay ----------------
+	if not flow_enabled:
+		flow_timer += delta
+		if flow_timer >= flow_start_delay:
+			flow_enabled = true
+
 	# ---------------- Jump Buffer ----------------
 	if Input.is_action_just_pressed("up"):
 		jump_buffer_timer = jump_buffer_time
@@ -148,23 +164,24 @@ func _physics_process(delta: float) -> void:
 		velocity.x = lerp(velocity.x, 0.0, 0.02)
 
 	# ---------------- Flow Meter Logic ----------------
-	var fps := Engine.physics_ticks_per_second
-	var real_delta: float = (1.0 / fps) if fps > 0 else delta
+	if flow_enabled:
+		var fps := Engine.physics_ticks_per_second
+		var real_delta: float = (1.0 / fps) if fps > 0 else delta
 
-	if is_on_floor():
-		var dir: float = Input.get_axis("left", "right")
+		if is_on_floor():
+			var dir: float = Input.get_axis("left", "right")
 
-		if dir != 0:
-			# Player moving — build flow and reset idle timer
-			flow_idle_timer = 0.0
-			flow_meter = clampf(flow_meter + flow_gain_rate * real_delta, 0.0, max_flow)
-		else:
-			# Player idle — increase idle timer
-			flow_idle_timer += real_delta
+			if dir != 0:
+				# Player moving — build flow and reset idle timer
+				flow_idle_timer = 0.0
+				flow_meter = clampf(flow_meter + flow_gain_rate * real_delta, 0.0, max_flow)
+			else:
+				# Player idle — increase idle timer
+				flow_idle_timer += real_delta
 
-			# Only decay after grace period
-			if flow_idle_timer > flow_idle_grace:
-				flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
+				# Only decay after grace period
+				if flow_idle_timer > flow_idle_grace:
+					flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
 
 	# ---------------- Update speed & vignette ----------------
 	var flow_multiplier: float = 1.0 + (flow_meter / max_flow) * 0.4
