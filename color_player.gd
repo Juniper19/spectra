@@ -170,19 +170,28 @@ func _physics_process(delta: float) -> void:
 
 		if is_on_floor():
 			var dir: float = Input.get_axis("left", "right")
+			var touching_wall: bool = false
 
-			if dir != 0:
-				# Player moving — build flow and reset idle timer
+			# Detect if player is colliding with a wall in the direction they're pressing
+			for i in range(get_slide_collision_count()):
+				var collision := get_slide_collision(i)
+				if collision.get_normal().x != 0.0:  # horizontal wall
+					if sign(collision.get_normal().x) == -sign(dir): 
+						touching_wall = true
+						break
+
+			var moving: bool = abs(velocity.x) > 5.0 and not touching_wall
+
+			if dir != 0 and moving:
+				# Actively moving, not blocked
 				flow_idle_timer = 0.0
 				flow_meter = clampf(flow_meter + flow_gain_rate * real_delta, 0.0, max_flow)
 			else:
-				# Player idle — increase idle timer
+				# Idle or pushing into wall
 				flow_idle_timer += real_delta
-
-				# Only decay after grace period
 				if flow_idle_timer > flow_idle_grace:
 					flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
-	
+
 	# if flow hits 0, start a new delay timer before it can rise again
 	if flow_enabled and flow_meter <= 0.0:
 		flow_enabled = false
