@@ -166,14 +166,24 @@ func _physics_process(delta: float) -> void:
 			if flow_idle_timer > flow_idle_grace:
 				flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
 
-	# Update speed based on flow
+	# ---------------- Update speed & vignette ----------------
 	var flow_multiplier: float = 1.0 + (flow_meter / max_flow) * 0.4
 	speed = base_speed * flow_multiplier
 
-	var vignette_strength: float = flow_meter / max_flow
-	vignette_mat.set_shader_parameter("intensity", vignette_strength)
+	# Target vignette intensity based on flow
+	var target_intensity: float = flow_meter / max_flow
+	var current_intensity: float = vignette_mat.get_shader_parameter("intensity")
+	var smoothed_intensity: float = lerp(current_intensity, target_intensity, 5.0 * delta)
+	vignette_mat.set_shader_parameter("intensity", smoothed_intensity)
 
-	
+	# Smoothly fade vignette color to match player color
+	var current_color: Color = vignette_mat.get_shader_parameter("color")
+	var target_color: Color = colors[current_color_index]
+	var smoothed_color: Color = current_color.lerp(target_color, 5.0 * delta)
+	vignette_mat.set_shader_parameter("color", smoothed_color)
+
+	vignette_mat.set_shader_parameter("color", smoothed_color)
+
 	move_and_slide()
 	check_deathpit()
 
