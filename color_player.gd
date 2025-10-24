@@ -182,6 +182,11 @@ func _physics_process(delta: float) -> void:
 				# Only decay after grace period
 				if flow_idle_timer > flow_idle_grace:
 					flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
+	
+	# if flow hits 0, start a new delay timer before it can rise again
+	if flow_enabled and flow_meter <= 0.0:
+		flow_enabled = false
+		flow_timer = 0.0
 
 	# ---------------- Update speed & vignette ----------------
 	var flow_multiplier: float = 1.0 + (flow_meter / max_flow) * 0.4
@@ -200,7 +205,8 @@ func _physics_process(delta: float) -> void:
 	vignette_mat.set_shader_parameter("color", smoothed_color)
 
 	vignette_mat.set_shader_parameter("color", smoothed_color)
-
+	
+	print("Flow: ", flow_meter)
 	move_and_slide()
 	check_deathpit()
 
