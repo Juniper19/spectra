@@ -101,11 +101,20 @@ func _physics_process(delta: float) -> void:
 
 	# ---------------- Movement ----------------
 	if not selecting_color:
-		var direction := Input.get_axis("left", "right")
+		var direction: float = Input.get_axis("left", "right")
+
 		if direction != 0:
+			# Detect if changing direction
+			if sign(velocity.x) != sign(direction) and abs(velocity.x) > 10.0:
+				# Instantly reduce deceleration penalty when reversing
+				velocity.x = direction * min(abs(velocity.x), speed)
+			
+			# Accelerate toward target
 			velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
 		else:
+			# Only apply friction when no input
 			velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+
 
 		# Flip sprite horizontally
 		if direction != 0:
