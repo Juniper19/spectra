@@ -33,6 +33,8 @@ var flow_meter: float = 0.0
 @export var max_flow: float = 6           # Cap for flow multiplier
 @export var base_speed: float = 165         # Store original base speed separately
 
+@onready var vignette_mat: ShaderMaterial = $FlowVisualizer/Vignette.material
+
 # ---------------- Lifecycle ----------------
 func _ready() -> void:
 	base_speed = speed
@@ -153,7 +155,9 @@ func _physics_process(delta: float) -> void:
 	var flow_multiplier := 1.0 + (flow_meter / max_flow) * 0.4   # up to +40% speed
 	speed = base_speed * flow_multiplier
 	print("Flow", flow_meter)
-
+	var vignette_strength: float = flow_meter / max_flow
+	vignette_mat.set_shader_parameter("intensity", vignette_strength)
+	
 	move_and_slide()
 	check_deathpit()
 

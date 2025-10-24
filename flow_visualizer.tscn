@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://cu0u0td63e5ns"]
+
+[ext_resource type="Shader" uid="uid://cdmi08l7f4l8p" path="res://VignetteShader.gdshader" id="1_br3l6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n3d1t"]
+shader = ExtResource("1_br3l6")
+shader_parameter/intensity = 0.0
+shader_parameter/color = Color(0, 0, 0, 1)
+
+[node name="FlowVisualizer" type="CanvasLayer"]
+
+[node name="Vignette" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_n3d1t")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
