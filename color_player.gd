@@ -28,7 +28,7 @@ var selected_index := -1
 
 # ---------------- Flow Meter ----------------
 var flow_meter: float = 0.0
-@export var flow_gain_rate: float = 1.8     # How quickly flow builds per second
+@export var flow_gain_rate: float = 1     # How quickly flow builds per second
 @export var flow_decay_rate: float = 10.0   # How quickly it decays when you stop
 @export var max_flow: float = 6.0           # Cap for flow multiplier
 @export var base_speed: float = 165.0       # Store original base speed separately
@@ -198,7 +198,7 @@ func _physics_process(delta: float) -> void:
 		flow_timer = 0.0
 
 	# ---------------- Update speed & vignette ----------------
-	var flow_multiplier: float = 1.0 + (flow_meter / max_flow) * 0.4
+	var flow_multiplier: float = 1.0 + (flow_meter / max_flow) * 0.7
 	speed = base_speed * flow_multiplier
 
 	# Target vignette intensity based on flow
