@@ -226,15 +226,12 @@ var mouse_start_position: Vector2
 var drag_threshold: float = 30.0  # how far you must drag before it counts
 
 func _unhandled_input(event: InputEvent) -> void:
-	# --- Right mouse button pressed ---
+	# --- Right Mouse Button Pressed (enter selection) ---
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed and not mouse_selecting:
 			mouse_selecting = true
 			selecting_color = true
 			selected_index = current_color_index
-
-			# Store where drag starts (mouse position in viewport)
-			mouse_start_position = event.position
 
 			# Show selector and slow time
 			color_selector.visible = true
@@ -244,15 +241,31 @@ func _unhandled_input(event: InputEvent) -> void:
 			color_selector.highlight(selected_index)
 			Engine.time_scale = 0.2
 
+		# --- Right Mouse Button Released (exit selection) ---
 		elif not event.pressed and mouse_selecting:
-			# --- Right mouse released ---
 			mouse_selecting = false
 			selecting_color = false
 			color_selector.visible = false
 			Engine.time_scale = 1.0
-			
+
+	# --- Mouse Movement (hover around selector) ---
+	elif event is InputEventMouseMotion and mouse_selecting:
+		# Get the color selector's center in viewport coordinates
+		var selector_center: Vector2 = color_selector.get_global_transform_with_canvas().origin + color_selector.size / 2.0
+
+		# Calculate direction of mouse relative to the selector's center
+		var delta: Vector2 = event.position - selector_center
+		if delta.length() > 20.0: # small dead zone in the center
+			var angle := atan2(delta.y, delta.x)
+			var new_index := _direction_to_index(angle)
+
+			if new_index != selected_index and new_index < colors.size():
+				selected_index = new_index
+				color_selector.highlight(selected_index)
+				_apply_color(selected_index)
+
 	# --- WASD or Arrow Key Selection ---
-	if selecting_color and event is InputEventKey and event.pressed:
+	elif selecting_color and event is InputEventKey and event.pressed:
 		var dir: Vector2 = Vector2.ZERO
 
 		match event.keycode:
@@ -266,7 +279,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				dir = Vector2(-1, 0)
 
 		if dir != Vector2.ZERO:
-			# Convert direction to index using same mapping as mouse
 			var dirs := [
 				Vector2(0, -1),  # up
 				Vector2(1, 0),   # right
@@ -287,16 +299,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				color_selector.highlight(selected_index)
 				_apply_color(selected_index)
 
-	# --- While dragging ---
-	elif event is InputEventMouseMotion and mouse_selecting:
-		var delta: Vector2 = event.position - mouse_start_position
-		if delta.length() > drag_threshold:
-			var angle := atan2(delta.y, delta.x)
-			var new_index := _direction_to_index(angle)
-			if new_index != selected_index and new_index < colors.size():
-				selected_index = new_index
-				color_selector.highlight(selected_index)
-				_apply_color(selected_index)  # <--- applies instantly
 
 func _direction_to_index(angle: float) -> int:
 	var drag_dir := Vector2(cos(angle), sin(angle))
