@@ -250,6 +250,42 @@ func _unhandled_input(event: InputEvent) -> void:
 			selecting_color = false
 			color_selector.visible = false
 			Engine.time_scale = 1.0
+			
+	# --- WASD or Arrow Key Selection ---
+	if selecting_color and event is InputEventKey and event.pressed:
+		var dir: Vector2 = Vector2.ZERO
+
+		match event.keycode:
+			KEY_W, KEY_UP:
+				dir = Vector2(0, -1)
+			KEY_D, KEY_RIGHT:
+				dir = Vector2(1, 0)
+			KEY_S, KEY_DOWN:
+				dir = Vector2(0, 1)
+			KEY_A, KEY_LEFT:
+				dir = Vector2(-1, 0)
+
+		if dir != Vector2.ZERO:
+			# Convert direction to index using same mapping as mouse
+			var dirs := [
+				Vector2(0, -1),  # up
+				Vector2(1, 0),   # right
+				Vector2(0, 1),   # down
+				Vector2(-1, 0)   # left
+			]
+
+			var best_index := 0
+			var best_dot := -INF
+			for i in range(dirs.size()):
+				var dot := dir.dot(dirs[i])
+				if dot > best_dot:
+					best_dot = dot
+					best_index = i
+
+			if best_index != selected_index and best_index < colors.size():
+				selected_index = best_index
+				color_selector.highlight(selected_index)
+				_apply_color(selected_index)
 
 	# --- While dragging ---
 	elif event is InputEventMouseMotion and mouse_selecting:
