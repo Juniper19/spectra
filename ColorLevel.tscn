@@ -596,7 +596,7 @@ position = Vector2(-82, 80)
 position = Vector2(-179, 65)
 target_scene = "uid://bss8t3wlhs8ah"
 spawn_point_name = "FromLevel1"
-prompt_text = "↑ Lobby"
+prompt_text = "lobby"
 
 [node name="TimerUI" parent="." instance=ExtResource("9_62hc3")]
 

@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://c4yaiu3ynvuar"]
+[gd_scene load_steps=6 format=3 uid="uid://c4yaiu3ynvuar"]
 
 [ext_resource type="Script" uid="uid://ce3u0hm8uxe00" path="res://level_door.gd" id="1_fbrah"]
 [ext_resource type="Texture2D" uid="uid://cx1d8qdynlkyx" path="res://Art/Cork.png" id="2_s1kbv"]
+[ext_resource type="FontFile" uid="uid://d0n8dd1mhivgq" path="res://Art/monogram.ttf" id="3_e2kuh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fbrah"]
 
@@ -31,8 +32,11 @@ sprite_frames = SubResource("SpriteFrames_e2kuh")
 
 [node name="Label" type="Label" parent="."]
 offset_left = -23.0
-offset_top = -27.0
+offset_top = -25.0
 offset_right = 25.0
-offset_bottom = -11.0
+offset_bottom = -9.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "Enter"
+theme_override_fonts/font = ExtResource("3_e2kuh")
+text = "enter"
+horizontal_alignment = 1
+vertical_alignment = 1

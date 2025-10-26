@@ -595,6 +595,7 @@ position = Vector2(170, 10)
 position = Vector2(-86, -1)
 target_scene = "uid://bss8t3wlhs8ah"
 spawn_point_name = "FromLobby"
+prompt_text = "lobby"
 
 [node name="SpawnPoints" type="Node2D" parent="."]
 
