@@ -15,9 +15,20 @@ var jump_buffer_timer: float = 0.0
 @export var apex_threshold: float = 40.0      # smaller = narrower apex zone
 
 # ---------------- Color Settings ----------------
-@export var colors: Array[Color] = [Color.RED, Color.GREEN, Color.BLUE]
+@export var total_colors: Array[Color] = [
+	Color.RED,
+	Color.GREEN,
+	Color.BLUE,
+	Color.YELLOW
+]
+
+var unlocked_colors: Array[int] = [0, 1, 2]  # red, green, blue unlocked
 var current_color_index: int = 0
 var spawn_position: Vector2
+
+var current_color: Color:
+	get:
+		return total_colors[unlocked_colors[current_color_index]]
 
 # ---------------- UI & Sprite References ----------------
 var selecting_color := false
@@ -46,8 +57,7 @@ var flow_idle_timer: float = 0.0            # Tracks idle time before decay
 func _ready() -> void:
 	base_speed = speed
 
-	# Shader color setup
-	shader_mat.set_shader_parameter("outline_color", colors[current_color_index])
+	shader_mat.set_shader_parameter("outline_color", current_color)
 
 	update_collision_masks()
 
@@ -65,7 +75,7 @@ func _ready() -> void:
 	color_selector.visible = false
 
 	# UI color wheel
-	color_selector.colors = colors
+	color_selector.colors = _get_unlocked_color_list()
 	color_selector.highlight(current_color_index)
 
 	# Wait one frame to ensure TileMaps are fully ready before coloring them
@@ -78,6 +88,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	var current_color: Color = total_colors[unlocked_colors[current_color_index]]
+
 	# ---------------- Flow Start Delay ----------------
 	if not flow_enabled:
 		flow_timer += delta
@@ -208,11 +220,9 @@ func _physics_process(delta: float) -> void:
 	vignette_mat.set_shader_parameter("intensity", smoothed_intensity)
 
 	# Smoothly fade vignette color to match player color
-	var current_color: Color = vignette_mat.get_shader_parameter("color")
-	var target_color: Color = colors[current_color_index]
-	var smoothed_color: Color = current_color.lerp(target_color, 5.0 * delta)
-	vignette_mat.set_shader_parameter("color", smoothed_color)
-
+	var current_vignette_color: Color = vignette_mat.get_shader_parameter("color")
+	var target_color: Color = total_colors[unlocked_colors[current_color_index]]
+	var smoothed_color: Color = current_vignette_color.lerp(target_color, 5.0 * delta)
 	vignette_mat.set_shader_parameter("color", smoothed_color)
 	
 	print("Flow: ", flow_meter)
@@ -235,7 +245,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 			# Show selector and slow time
 			color_selector.visible = true
-			color_selector.colors = colors
+			color_selector.colors = _get_unlocked_color_list()
 			color_selector.set_meta("camera", $Camera2D)
 			await get_tree().process_frame
 			color_selector.highlight(selected_index)
@@ -256,10 +266,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		# Calculate direction of mouse relative to the selector's center
 		var delta: Vector2 = event.position - selector_center
 		if delta.length() > 20.0: # small dead zone in the center
-			var angle := atan2(delta.y, delta.x)
-			var new_index := _direction_to_index(angle)
+			var angle: float = atan2(delta.y, delta.x)
+			var new_index: int = _direction_to_index(angle)
 
-			if new_index != selected_index and new_index < colors.size():
+			if new_index != selected_index and new_index < unlocked_colors.size():
 				selected_index = new_index
 				color_selector.highlight(selected_index)
 				_apply_color(selected_index)
@@ -279,26 +289,25 @@ func _unhandled_input(event: InputEvent) -> void:
 				dir = Vector2(-1, 0)
 
 		if dir != Vector2.ZERO:
-			var dirs := [
+			var dirs: Array[Vector2] = [
 				Vector2(0, -1),  # up
 				Vector2(1, 0),   # right
 				Vector2(0, 1),   # down
 				Vector2(-1, 0)   # left
 			]
 
-			var best_index := 0
-			var best_dot := -INF
+			var best_index: int = 0
+			var best_dot: float = -INF
 			for i in range(dirs.size()):
-				var dot := dir.dot(dirs[i])
+				var dot: float = dir.dot(dirs[i])
 				if dot > best_dot:
 					best_dot = dot
 					best_index = i
 
-			if best_index != selected_index and best_index < colors.size():
+			if best_index != selected_index and best_index < unlocked_colors.size():
 				selected_index = best_index
 				color_selector.highlight(selected_index)
 				_apply_color(selected_index)
-
 
 func _direction_to_index(angle: float) -> int:
 	var drag_dir := Vector2(cos(angle), sin(angle))
@@ -338,7 +347,7 @@ func _apply_color(index: int) -> void:
 	push_out_of_tiles()
 
 	# update player outline color instantly
-	shader_mat.set_shader_parameter("outline_color", colors[index])
+	shader_mat.set_shader_parameter("outline_color", total_colors[unlocked_colors[index]])
 
 	# trigger the bounce effect
 	play_color_swap_effect()
@@ -355,24 +364,22 @@ func play_color_swap_effect() -> void:
 	tween.tween_property(sprite, "scale", Vector2(1.2, 0.8), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.05).set_trans(Tween.TRANS_SINE)
 
-func add_new_color(new_color: Color) -> void:
-	# Check if color already exists
-	for c in colors:
-		if c.is_equal_approx(new_color):
-			return
-
-	# Add color to the list
-	colors.append(new_color)
-
-	# Update UI and visuals
-	color_selector.colors = colors
-	print("New color unlocked:", new_color)
-	print("Total colors:", colors)
+func unlock_color(index: int) -> void:
+	if index not in unlocked_colors and index >= 0 and index < total_colors.size():
+		unlocked_colors.append(index)
+		print("Unlocked new color:", total_colors[index])
+		color_selector.colors = _get_unlocked_color_list()
 
 	# little bounce effect
 	var tween := create_tween()
 	tween.tween_property(sprite, "scale", Vector2(1.3, 1.3), 0.1)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.1)
+	
+func _get_unlocked_color_list() -> Array[Color]:
+	var list: Array[Color] = []
+	for i in unlocked_colors:
+		list.append(total_colors[i])
+	return list
 
 func push_out_of_tiles() -> void:
 	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
@@ -449,12 +456,13 @@ func update_tile_outlines() -> void:
 			continue
 
 		# Active layer (matches player color)
-		if i == current_color_index:
+		if color.is_equal_approx(current_color):
 			# Remove shader and smoothly fade modulate to full color
 			tm.material = null
 			var tween := create_tween()
 			tween.set_ignore_time_scale(true)
 			tween.tween_property(tm, "modulate", color, 0.15).set_trans(Tween.TRANS_SINE)
+
 		
 		# Inactive layers (outline only)
 		else:
