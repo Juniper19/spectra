@@ -14,6 +14,7 @@ var jump_buffer_timer: float = 0.0
 @export var apex_gravity_scale: float = 0.7   # lower = floatier apex
 @export var apex_threshold: float = 40.0      # smaller = narrower apex zone
 
+var spawn_position: Vector2
 # ---------------- Color Settings ----------------
 @export var total_colors: Array[Color] = [
 	Color.RED,
@@ -22,9 +23,8 @@ var jump_buffer_timer: float = 0.0
 	Color.YELLOW
 ]
 
-var unlocked_colors: Array[int] = [0, 2,3]  #STARTING COLORS based on total color array above
+var unlocked_colors: Array[int] = [1]  #STARTING COLORS based on total color array above
 var current_color_index: int = 0
-var spawn_position: Vector2
 
 var current_color: Color:
 	get:

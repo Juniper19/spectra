@@ -718,8 +718,9 @@ offset_right = 380.0
 offset_bottom = 80.0
 
 [node name="Star" parent="." instance=ExtResource("7_gqgj8")]
-modulate = Color(0, 1, 0, 1)
+modulate = Color(1, 0, 0, 1)
 position = Vector2(53, -2)
+star_color = Color(1, 0, 0, 1)
 
 [node name="SpawnPoints" type="Node2D" parent="."]
 position = Vector2(-97, -15)

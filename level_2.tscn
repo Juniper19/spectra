@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://dfx1wjg1peb0w"]
+[gd_scene load_steps=25 format=4 uid="uid://dfx1wjg1peb0w"]
 
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Art/Paper3.png" id="1_7dov7"]
 [ext_resource type="Shader" uid="uid://d0no8jpugg18o" path="res://TileShader.gdshader" id="2_ehv2h"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://cktt0exc2nug1" path="res://timer_ui.tscn" id="6_7dov7"]
 [ext_resource type="PackedScene" uid="uid://dpwf30wtv44ym" path="res://timer_controller.tscn" id="7_s77qv"]
 [ext_resource type="PackedScene" uid="uid://c4yaiu3ynvuar" path="res://level_door.tscn" id="8_5hnhx"]
+[ext_resource type="PackedScene" uid="uid://dufa28p2oaul2" path="res://star.tscn" id="10_15wb7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_78pok"]
 
@@ -601,3 +602,7 @@ prompt_text = "lobby"
 
 [node name="FromLobby" type="Node2D" parent="SpawnPoints"]
 position = Vector2(-77, -1)
+
+[node name="Star" parent="." instance=ExtResource("10_15wb7")]
+modulate = Color(0, 0, 1, 1)
+star_color = Color(0, 0, 1, 1)
