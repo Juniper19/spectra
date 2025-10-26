@@ -22,7 +22,7 @@ var jump_buffer_timer: float = 0.0
 	Color.YELLOW
 ]
 
-var unlocked_colors: Array[int] = [0, 1, 2]  # red, green, blue unlocked
+var unlocked_colors: Array[int] = [0, 2, 1]  #STARTING COLORS based on total color array above
 var current_color_index: int = 0
 var spawn_position: Vector2
 
@@ -55,6 +55,13 @@ var flow_idle_timer: float = 0.0            # Tracks idle time before decay
 
 # ---------------- Lifecycle ----------------
 func _ready() -> void:
+	# Prevent crashes if somehow loading without any colors or an invalid index
+	if unlocked_colors.is_empty():
+		unlocked_colors.append(0)
+		current_color_index = 0
+	else:
+		current_color_index = clamp(current_color_index, 0, unlocked_colors.size() - 1)
+
 	base_speed = speed
 
 	shader_mat.set_shader_parameter("outline_color", current_color)
@@ -88,8 +95,6 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var current_color: Color = total_colors[unlocked_colors[current_color_index]]
-
 	# ---------------- Flow Start Delay ----------------
 	if not flow_enabled:
 		flow_timer += delta
@@ -378,7 +383,8 @@ func unlock_color(index: int) -> void:
 func _get_unlocked_color_list() -> Array[Color]:
 	var list: Array[Color] = []
 	for i in unlocked_colors:
-		list.append(total_colors[i])
+		if i >= 0 and i < total_colors.size():
+			list.append(total_colors[i])
 	return list
 
 func push_out_of_tiles() -> void:
@@ -486,13 +492,17 @@ func update_collision_masks() -> void:
 	set_collision_mask_value(3, false) # blue
 	set_collision_mask_value(4, false) # green
 	set_collision_mask_value(5, false) # yellow
-	set_collision_mask_value(16, true) # deathpit (always active)
+	set_collision_mask_value(16, true) # deathpit
 
-	match current_color_index:
-		0: set_collision_mask_value(2, true) # red
-		1: set_collision_mask_value(4, true) # green
-		2: set_collision_mask_value(3, true) # blue
-		3: set_collision_mask_value(5, true) # yellow
+	var c: Color = current_color
+	if c.is_equal_approx(Color.RED):
+		set_collision_mask_value(2, true)
+	elif c.is_equal_approx(Color.GREEN):
+		set_collision_mask_value(4, true)
+	elif c.is_equal_approx(Color.BLUE):
+		set_collision_mask_value(3, true)
+	elif c.is_equal_approx(Color.YELLOW):
+		set_collision_mask_value(5, true)
 
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
@@ -505,3 +515,4 @@ func check_deathpit() -> void:
 func respawn() -> void:
 	global_position = spawn_position
 	velocity = Vector2.ZERO
+	shader_mat.set_shader_parameter("outline_color", current_color)

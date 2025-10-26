@@ -17,6 +17,10 @@ func _ready() -> void:
 	queue_redraw()
 	
 func _refresh_colors() -> void:
+	if colors.is_empty():
+		selected_index = -1
+	else:
+		selected_index = clamp(selected_index, 0, colors.size() - 1)
 	queue_redraw()
 	
 func _draw() -> void:
