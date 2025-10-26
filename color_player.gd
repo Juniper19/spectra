@@ -22,7 +22,7 @@ var jump_buffer_timer: float = 0.0
 	Color.YELLOW
 ]
 
-var unlocked_colors: Array[int] = [0, 2, 1]  #STARTING COLORS based on total color array above
+var unlocked_colors: Array[int] = [0, 2,3]  #STARTING COLORS based on total color array above
 var current_color_index: int = 0
 var spawn_position: Vector2
 
@@ -230,7 +230,6 @@ func _physics_process(delta: float) -> void:
 	var smoothed_color: Color = current_vignette_color.lerp(target_color, 5.0 * delta)
 	vignette_mat.set_shader_parameter("color", smoothed_color)
 	
-	print("Flow: ", flow_meter)
 	move_and_slide()
 	check_deathpit()
 
@@ -438,7 +437,7 @@ func push_out_of_tiles() -> void:
 
 # ---------------- Tile Outline Update ----------------
 func update_tile_outlines() -> void:
-	var color_names = ["RED", "GREEN", "BLUE", "WHITE"]
+	var color_names = ["RED", "GREEN", "BLUE", "YELLOW", "WHITE"]
 	for i in range(color_names.size()):
 		var name = color_names[i]
 		var node_path = "../Platforms" + name
@@ -455,6 +454,7 @@ func update_tile_outlines() -> void:
 			"RED": color = Color.RED
 			"GREEN": color = Color.GREEN
 			"BLUE": color = Color.BLUE
+			"YELLOW": color = Color.YELLOW
 			"WHITE": color = Color.WHITE
 
 		# Skip white platforms entirely
@@ -469,7 +469,6 @@ func update_tile_outlines() -> void:
 			tween.set_ignore_time_scale(true)
 			tween.tween_property(tm, "modulate", color, 0.15).set_trans(Tween.TRANS_SINE)
 
-		
 		# Inactive layers (outline only)
 		else:
 			# If missing material, reapply the shader

@@ -1,7 +1,7 @@
 @tool
 extends Area2D
 
-@export var star_color: Color = Color.YELLOW:
+@export var star_color: Color = Color.GREEN:
 	set(value):
 		star_color = value
 		if Engine.is_editor_hint():
