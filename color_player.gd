@@ -249,10 +249,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	# --- Right Mouse Button Pressed (enter selection) ---
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed and not mouse_selecting:
+			if unlocked_colors.size() <= 1:
+				return
+
 			mouse_selecting = true
 			selecting_color = true
 			selected_index = current_color_index
-
 			# Show selector and slow time
 			color_selector.visible = true
 			color_selector.colors = _get_unlocked_color_list()
@@ -260,6 +262,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			await get_tree().process_frame
 			color_selector.highlight(selected_index)
 			Engine.time_scale = 0.2
+
 
 		# --- Right Mouse Button Released (exit selection) ---
 		elif not event.pressed and mouse_selecting:

@@ -609,7 +609,7 @@ star_color = Color(0, 0, 1, 1)
 star_name = "Star"
 
 [node name="StarRED" parent="." instance=ExtResource("10_15wb7")]
-modulate = Color(0, 1, 0, 1)
+modulate = Color(1, 0, 0, 1)
 position = Vector2(118, -22)
 star_color = Color(1, 0, 0, 1)
 star_name = "Star"

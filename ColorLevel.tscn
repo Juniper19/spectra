@@ -721,7 +721,7 @@ offset_bottom = 80.0
 modulate = Color(1, 0, 0, 1)
 position = Vector2(53, -2)
 star_color = Color(1, 0, 0, 1)
-star_name = null
+star_name = "Star"
 
 [node name="SpawnPoints" type="Node2D" parent="."]
 position = Vector2(-97, -15)
