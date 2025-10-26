@@ -1,20 +1,27 @@
 @tool
 extends Area2D
 
-@export var orb_color: Color = Color.RED:
+@export var orb_color: Color:
 	set(value):
 		orb_color = value
 		if Engine.is_editor_hint():
 			modulate = value
 
-@export var boost_force: float = 420.0  # matches your normal jump_force or slightly higher
+@export var boost_force: float = 450.0
+@export var respawn_time: float = 2.0  # seconds before orb returns
+
 var player_in_area: CharacterBody2D = null
+var sprite: Node2D
 
 func _ready() -> void:
 	modulate = orb_color
+
 	if not Engine.is_editor_hint():
 		connect("body_entered", Callable(self, "_on_body_entered"))
 		connect("body_exited", Callable(self, "_on_body_exited"))
+
+	var sprite_candidate := get_node_or_null("Sprite2D")
+	sprite = sprite_candidate if sprite_candidate else get_node_or_null("AnimatedSprite2D")
 
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("player"):
@@ -25,18 +32,36 @@ func _on_body_exited(body: Node) -> void:
 		player_in_area = null
 
 func _process(_delta: float) -> void:
-	# only boost if player is overlapping + presses jump + color matches
+	# only boost if player overlaps, presses jump, and color matches
 	if player_in_area and Input.is_action_just_pressed("up"):
 		var player := player_in_area
 		if "current_color" in player and player.current_color.is_equal_approx(orb_color):
 			_apply_jump_boost(player)
 
 func _apply_jump_boost(player: CharacterBody2D) -> void:
-	# overwrite the vertical velocity (like a jump reset)
 	player.velocity.y = -boost_force
+	_flash_and_hide()
 
-	# little squash + stretch animation
+func _flash_and_hide() -> void:
+	# quick feedback animation before disappearing
 	var tween := create_tween()
 	tween.set_ignore_time_scale(true)
 	tween.tween_property(self, "scale", Vector2(1.3, 0.8), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(self, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_SINE)
+	tween.parallel().tween_property(self, "modulate:a", 0.0, 0.2).set_delay(0.1)
+	tween.tween_callback(Callable(self, "_on_hide_complete"))
+
+func _on_hide_complete() -> void:
+	visible = false
+	set_process(false)  # pause checking for input while hidden
+	await get_tree().create_timer(respawn_time, false).timeout
+	_respawn()
+
+func _respawn() -> void:
+	modulate.a = 0.0
+	visible = true
+	set_process(true)
+
+	var tween := create_tween()
+	tween.set_ignore_time_scale(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_trans(Tween.TRANS_SINE)

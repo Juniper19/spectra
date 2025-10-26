@@ -617,4 +617,5 @@ star_color = Color(1, 0, 0, 1)
 modulate = Color(0, 1, 0, 1)
 position = Vector2(234, -55)
 orb_color = Color(0, 1, 0, 1)
-boost_force = 600.0
+boost_force = 450.0
+respawn_time = null
