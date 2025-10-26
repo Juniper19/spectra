@@ -55,6 +55,12 @@ var flow_idle_timer: float = 0.0            # Tracks idle time before decay
 
 # ---------------- Lifecycle ----------------
 func _ready() -> void:
+	# GET RID OF THIS ONCE COLORS ARE GLOBAL! THIS IS SO UNLOCKED COLORS SYNCH ACROSS SCENES.. 
+	if get_tree().root.has_meta("unlocked_colors"):
+		unlocked_colors = get_tree().root.get_meta("unlocked_colors")
+	else:
+		get_tree().root.set_meta("unlocked_colors", unlocked_colors)
+
 	# Prevent crashes if somehow loading without any colors or an invalid index
 	if unlocked_colors.is_empty():
 		unlocked_colors.append(0)
@@ -378,6 +384,9 @@ func unlock_color(index: int) -> void:
 	var tween := create_tween()
 	tween.tween_property(sprite, "scale", Vector2(1.3, 1.3), 0.1)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.1)
+	
+	# GET RID OF THIS ONCE COLOR SYSTEM IS GLOBAL!!
+	get_tree().root.set_meta("unlocked_colors", unlocked_colors)
 	
 func _get_unlocked_color_list() -> Array[Color]:
 	var list: Array[Color] = []

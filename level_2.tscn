@@ -603,6 +603,13 @@ prompt_text = "lobby"
 [node name="FromLobby" type="Node2D" parent="SpawnPoints"]
 position = Vector2(-77, -1)
 
-[node name="Star" parent="." instance=ExtResource("10_15wb7")]
+[node name="StarBLUE" parent="." instance=ExtResource("10_15wb7")]
 modulate = Color(0, 0, 1, 1)
 star_color = Color(0, 0, 1, 1)
+star_name = "Star"
+
+[node name="StarRED" parent="." instance=ExtResource("10_15wb7")]
+modulate = Color(0, 1, 0, 1)
+position = Vector2(118, -22)
+star_color = Color(1, 0, 0, 1)
+star_name = "Star"
