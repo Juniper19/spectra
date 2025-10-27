@@ -35,6 +35,11 @@ func _process(_delta: float) -> void:
 	if sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation("idle") and not sprite.is_playing():
 		sprite.play("idle")
 
+	# make NPC face the player only while nearby
+	if player_in_range:
+		var player_pos: Vector2 = player_in_range.global_position
+		sprite.flip_h = player_pos.x < global_position.x  # face left if player is left of NPC
+
 	if player_in_range and Input.is_action_just_pressed("interact"):
 		_show_prompt(false)
 		_start_dialogue()
