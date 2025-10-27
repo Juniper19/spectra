@@ -5,12 +5,17 @@ extends Area2D
 
 var player_in_range: Node = null
 @onready var prompt_label: Label = $Label
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D  # reference your sprite
 
 func _ready() -> void:
 	# initialize label
 	prompt_label.text = prompt_text
 	prompt_label.visible = false
 	prompt_label.modulate.a = 0.0
+
+	# start looping idle animation
+	if sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation("idle"):
+		sprite.play("idle")
 
 	connect("body_entered", Callable(self, "_on_body_entered"))
 	connect("body_exited", Callable(self, "_on_body_exited"))
@@ -26,6 +31,10 @@ func _on_body_exited(body: Node) -> void:
 		_show_prompt(false)
 
 func _process(_delta: float) -> void:
+	# ensure idle animation keeps looping
+	if sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation("idle") and not sprite.is_playing():
+		sprite.play("idle")
+
 	if player_in_range and Input.is_action_just_pressed("interact"):
 		_show_prompt(false)
 		_start_dialogue()
@@ -40,8 +49,10 @@ func _start_dialogue() -> void:
 	await get_tree().process_frame
 	if DialogueManager.has_node("Balloon"):
 		var balloon = DialogueManager.get_node("Balloon")
-		balloon.connect("balloon_started", Callable(player_in_range, "_on_dialogue_started"))
-		balloon.connect("balloon_finished", Callable(player_in_range, "_on_dialogue_finished"))
+		if not balloon.is_connected("balloon_started", Callable(player_in_range, "_on_dialogue_started")):
+			balloon.connect("balloon_started", Callable(player_in_range, "_on_dialogue_started"))
+		if not balloon.is_connected("balloon_finished", Callable(player_in_range, "_on_dialogue_finished")):
+			balloon.connect("balloon_finished", Callable(player_in_range, "_on_dialogue_finished"))
 
 # fade the prompt label in/out
 func _show_prompt(visible: bool) -> void:

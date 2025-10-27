@@ -147,7 +147,7 @@ tile_map_data = PackedByteArray("AAD5/wIAAQAEAAEAAAD6/wIAAQAEAAEAAAD7/wIAAQAEAAE
 tile_set = SubResource("TileSet_x4164")
 
 [node name="LittleGuy" parent="." instance=ExtResource("6_jyd6i")]
-position = Vector2(-35, 13)
+position = Vector2(-36, 16)
 
 [node name="MyPlayer" parent="." instance=ExtResource("3_tftiq")]
 position = Vector2(40, 10)
@@ -162,14 +162,10 @@ offset_bottom = 80.0
 
 [node name="LevelDoor" parent="." instance=ExtResource("5_1gg6n")]
 position = Vector2(74, 12)
-target_scene = "uid://d0iu3lby11od6"
-spawn_point_name = "FromLobby"
 prompt_text = "test grounds"
 
 [node name="LevelDoor2" parent="." instance=ExtResource("5_1gg6n")]
 position = Vector2(138, 14)
-target_scene = "uid://dfx1wjg1peb0w"
-spawn_point_name = "FromLevel2"
 prompt_text = "level 2"
 
 [node name="SpawnPoints" type="Node2D" parent="."]

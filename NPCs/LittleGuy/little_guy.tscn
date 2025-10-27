@@ -1,12 +1,48 @@
-[gd_scene load_steps=6 format=3 uid="uid://d02ckkfd2v4l1"]
+[gd_scene load_steps=11 format=3 uid="uid://d02ckkfd2v4l1"]
 
-[ext_resource type="Texture2D" uid="uid://0a5avhw7r540" path="res://Misc Assets/GraySquare32.png" id="1_ugobn"]
 [ext_resource type="Script" uid="uid://bnrw21pbc0pf4" path="res://NPCs/LittleGuy/little_guy.gd" id="1_v0pd8"]
 [ext_resource type="Resource" uid="uid://ckbjwcf4lbmtg" path="res://NPCs/LittleGuy/test.dialogue" id="2_hgshy"]
+[ext_resource type="Texture2D" uid="uid://t7lri5w63v3k" path="res://Player/Art/BluePlayerIdle-Sheet.png" id="3_fxgpt"]
 [ext_resource type="FontFile" uid="uid://d0n8dd1mhivgq" path="res://Misc Assets/monogram.ttf" id="4_fxgpt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v0pd8"]
 size = Vector2(34, 34)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0yjd"]
+atlas = ExtResource("3_fxgpt")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rim20"]
+atlas = ExtResource("3_fxgpt")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uxam2"]
+atlas = ExtResource("3_fxgpt")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ox12"]
+atlas = ExtResource("3_fxgpt")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bsfhc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f0yjd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rim20")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uxam2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ox12")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}]
 
 [node name="LittleGuy" type="Area2D"]
 collision_layer = 0
@@ -17,8 +53,11 @@ dialogue_file = ExtResource("2_hgshy")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_v0pd8")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_ugobn")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, 1)
+sprite_frames = SubResource("SpriteFrames_bsfhc")
+animation = &"idle"
+frame_progress = 0.58036155
 
 [node name="Label" type="Label" parent="."]
 offset_left = -23.0
