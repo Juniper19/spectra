@@ -1,0 +1,179 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxomukr8cc1ja"]
+
+[ext_resource type="Script" path="res://UltimatePlatformerController.gd" id="1_i3pqv"]
+[ext_resource type="Texture2D" uid="uid://bahxc50ydmh6e" path="res://Misc Assets/Square16.png" id="2_onrkg"]
+
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4drs2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"crouch_idle",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"crouch_walk",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"dash",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": false,
+"name": &"falling",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": false,
+"name": &"latch",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": false,
+"name": &"roll",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"run",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": false,
+"name": &"slide",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"twirl",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_onrkg")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wcmxd"]
+size = Vector2(16, 16)
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerSprite", "PlayerCollider", "leftRaycast", "middleRaycast", "rightRaycast")]
+script = ExtResource("1_i3pqv")
+PlayerSprite = NodePath("AnimatedSprite2D")
+PlayerCollider = NodePath("CollisionShape2D")
+maxSpeed = 117.863
+timeToReachMaxSpeed = 0.0
+timeToReachZeroSpeed = 0.1
+jumpHeight = 1.642
+gravityScale = 22.0
+descendingGravityFactor = 1.2
+jumpVariable = 8.0
+wallJump = true
+leftRaycast = NodePath("lCast")
+middleRaycast = NodePath("mCast")
+rightRaycast = NodePath("rCast")
+run = true
+jump = true
+idle = true
+walk = true
+slide = true
+latch = true
+falling = true
+crouch_idle = true
+crouch_walk = true
+roll = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4drs2")
+animation = &"walk"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_wcmxd")
+
+[node name="lCast" type="RayCast2D" parent="."]
+position = Vector2(-6, -28)
+target_position = Vector2(0, -12)
+
+[node name="mCast" type="RayCast2D" parent="."]
+position = Vector2(0, -28)
+target_position = Vector2(0, -12)
+
+[node name="rCast" type="RayCast2D" parent="."]
+position = Vector2(6, -28)
+target_position = Vector2(0, -12)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -27)
+zoom = Vector2(3, 3)
+position_smoothing_enabled = true
+
+[node name="lcast" type="ColorRect" parent="."]
+offset_left = -7.0
+offset_top = -40.0
+offset_right = -5.0
+offset_bottom = -16.0
+color = Color(1, 0.07704, 0.141602, 0.596078)
+
+[node name="mcast" type="ColorRect" parent="."]
+offset_left = -1.0
+offset_top = -40.0
+offset_right = 1.0
+offset_bottom = -16.0
+color = Color(0.52549, 1, 1, 0.498039)
+
+[node name="rcast" type="ColorRect" parent="."]
+offset_left = 5.0
+offset_top = -40.0
+offset_right = 7.0
+offset_bottom = -16.0
+color = Color(0.52549, 1, 1, 0.498039)
