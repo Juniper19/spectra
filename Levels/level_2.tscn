@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://dpwf30wtv44ym" path="res://Timer System/timer_controller.tscn" id="8_0ttnk"]
 [ext_resource type="PackedScene" uid="uid://c4yaiu3ynvuar" path="res://Levels/Doors/level_door.tscn" id="9_v3vm6"]
 [ext_resource type="PackedScene" uid="uid://dufa28p2oaul2" path="res://Color Management/Star (Add Color)/star.tscn" id="10_16yl7"]
-[ext_resource type="PackedScene" uid="uid://dyayp3bxxot4c" path="res://Boost/BoostOrb.tscn" id="11_3slvs"]
+[ext_resource type="PackedScene" uid="uid://dyayp3bxxot4c" path="res://Color Management/Boost/BoostOrb.tscn" id="11_3slvs"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_78pok"]
 
