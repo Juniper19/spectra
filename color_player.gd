@@ -201,7 +201,7 @@ func _physics_process(delta: float) -> void:
 				if collision.get_normal().x != 0.0:  # horizontal wall
 					if sign(collision.get_normal().x) == -sign(dir): 
 						touching_wall = true
-						break
+						break 
 
 			var moving: bool = abs(velocity.x) > 5.0 and not touching_wall
 
