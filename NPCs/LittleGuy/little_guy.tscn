@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://d02ckkfd2v4l1"]
+
+[ext_resource type="Texture2D" uid="uid://0a5avhw7r540" path="res://Misc Assets/GraySquare32.png" id="1_ugobn"]
+[ext_resource type="Script" uid="uid://bnrw21pbc0pf4" path="res://NPCs/LittleGuy/little_guy.gd" id="1_v0pd8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v0pd8"]
+size = Vector2(34, 34)
+
+[node name="LittleGuy" type="Area2D"]
+collision_layer = 0
+collision_mask = 32767
+script = ExtResource("1_v0pd8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_v0pd8")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ugobn")

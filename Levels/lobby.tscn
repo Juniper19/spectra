@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=4 uid="uid://bss8t3wlhs8ah"]
+[gd_scene load_steps=10 format=4 uid="uid://bss8t3wlhs8ah"]
 
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Misc Assets/Paper3.png" id="1_ll2xe"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Levels/TilesBasic.png" id="2_2wvic"]
 [ext_resource type="PackedScene" uid="uid://cn2f1c4k0n7tl" path="res://Player/MyPlayer.tscn" id="3_tftiq"]
 [ext_resource type="PackedScene" uid="uid://8k0wbie5ewlm" path="res://Color Management/ColorSelector.tscn" id="4_tftiq"]
 [ext_resource type="PackedScene" uid="uid://c4yaiu3ynvuar" path="res://Levels/Doors/level_door.tscn" id="5_1gg6n"]
+[ext_resource type="PackedScene" uid="uid://d02ckkfd2v4l1" path="res://NPCs/LittleGuy/little_guy.tscn" id="6_jyd6i"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xrgmn"]
 
@@ -144,6 +145,9 @@ region_rect = Rect2(0, 0, 5000, 5000)
 [node name="PlatformsWHITE" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AAD5/wIAAQAEAAEAAAD6/wIAAQAEAAEAAAD7/wIAAQAEAAEAAAD8/wIAAQAEAAEAAAD9/wIAAQAEAAEAAAD+/wIAAQAEAAEAAAD//wIAAQAEAAEAAAAAAAIAAQAEAAEAAAABAAIAAQAEAAEAAAACAAIAAQAEAAEAAAADAAIAAQAEAAEAAAAEAAIAAQAEAAEAAAAFAAIAAQAEAAEAAAAGAAIAAQAEAAEAAAAHAAIAAQAEAAEAAAAIAAIAAQAEAAEAAAAJAAIAAQAFAAEAAAD4/wIAAQAEAAEAAAD3/wIAAQAEAAEAAAD2/wIAAQAEAAEAAAD1/wIAAQAEAAEAAAD0/wIAAQADAAEAAAA=")
 tile_set = SubResource("TileSet_x4164")
+
+[node name="LittleGuy" parent="." instance=ExtResource("6_jyd6i")]
+position = Vector2(-35, 13)
 
 [node name="MyPlayer" parent="." instance=ExtResource("3_tftiq")]
 position = Vector2(40, 10)

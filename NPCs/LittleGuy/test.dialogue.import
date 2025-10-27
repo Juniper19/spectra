@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://ckbjwcf4lbmtg"
+path="res://.godot/imported/test.dialogue-f95884f422c186892fc1e5aaae6f4d8a.tres"
+
+[deps]
+
+source_file="res://NPCs/LittleGuy/test.dialogue"
+dest_files=["res://.godot/imported/test.dialogue-f95884f422c186892fc1e5aaae6f4d8a.tres"]
+
+[params]
+
+defaults=true
