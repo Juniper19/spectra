@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://bss8t3wlhs8ah"]
+[gd_scene load_steps=12 format=4 uid="uid://bss8t3wlhs8ah"]
 
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Misc Assets/Paper3.png" id="1_ll2xe"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Levels/TilesBasic.png" id="2_2wvic"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://8k0wbie5ewlm" path="res://Color Management/ColorSelector.tscn" id="4_tftiq"]
 [ext_resource type="PackedScene" uid="uid://c4yaiu3ynvuar" path="res://Levels/Doors/level_door.tscn" id="5_1gg6n"]
 [ext_resource type="PackedScene" uid="uid://d02ckkfd2v4l1" path="res://NPCs/LittleGuy/little_guy.tscn" id="6_jyd6i"]
+[ext_resource type="PackedScene" uid="uid://dojdvh0sj0wcg" path="res://ChromaticAbberation.tscn" id="7_pqlhq"]
+[ext_resource type="Texture2D" uid="uid://m2wywdnfhhcf" path="res://assets/Cabin.png" id="8_5wo6p"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xrgmn"]
 
@@ -169,6 +171,10 @@ target_scene = "uid://dfx1wjg1peb0w"
 spawn_point_name = "FromLevel2"
 prompt_text = "level 2"
 
+[node name="Cabin" type="Sprite2D" parent="."]
+position = Vector2(-179, -35)
+texture = ExtResource("8_5wo6p")
+
 [node name="MyPlayer" parent="." instance=ExtResource("3_tftiq")]
 position = Vector2(40, 10)
 
@@ -180,3 +186,5 @@ position = Vector2(138, 15)
 
 [node name="FromTestGrounds" type="Node2D" parent="SpawnPoints"]
 position = Vector2(74, 15)
+
+[node name="ChromaticAbberation" parent="." instance=ExtResource("7_pqlhq")]
