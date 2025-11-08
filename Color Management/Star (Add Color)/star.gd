@@ -2,19 +2,23 @@
 extends Area2D
 
 @export var star_color: Color
-@export var star_name: String = ""  # optional, defaults to node name
+@export var star_name: String = ""
 
 func _ready() -> void:
-	# Use node name (like "StarRED") 
+	# Ensure the name is consistent
 	if star_name == "":
 		star_name = name
 
-	# --- Check if this star was already collected ---
-	if get_tree().root.has_meta("collected_stars"):
-		var collected: Array = get_tree().root.get_meta("collected_stars")
-		if star_name in collected:
-			queue_free()
-			return
+	# --- Ensure collected_stars array always exists globally ---
+	if not get_tree().root.has_meta("collected_stars"):
+		get_tree().root.set_meta("collected_stars", [])
+
+	var collected: Array = get_tree().root.get_meta("collected_stars")
+
+	# --- If star was already collected, remove it ---
+	if star_name in collected:
+		queue_free()
+		return
 
 	# --- Set visual color ---
 	modulate = star_color
@@ -26,21 +30,16 @@ func _on_body_entered(body: Node) -> void:
 	if not body.is_in_group("player"):
 		return
 
-	# Expect player to have total_colors and unlock_color()
 	var player := body
-	if not ("total_colors" in player and "unlock_color" in player):
-		push_warning("Player missing color methods.")
-		return
 
 	var idx := _find_color_index(player.total_colors, star_color)
 	if idx == -1:
-		push_warning("Star color not found in total_colors.")
 		return
 
 	player.unlock_color(idx)
 
-	# --- Mark star as collected globally ---
-	var collected_stars: Array = get_tree().root.get_meta("collected_stars") if get_tree().root.has_meta("collected_stars") else []
+	# --- Mark star as collected ---
+	var collected_stars: Array = get_tree().root.get_meta("collected_stars")
 	if star_name not in collected_stars:
 		collected_stars.append(star_name)
 		get_tree().root.set_meta("collected_stars", collected_stars)
