@@ -3,6 +3,7 @@ extends StaticBody2D
 @export var block_color: String = "red"
 
 func _ready() -> void:
+	add_to_group("placeable_block")
 	_apply_color()
 	_set_collision_layer()
 
