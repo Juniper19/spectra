@@ -1,5 +1,6 @@
-[gd_scene load_steps=28 format=4 uid="uid://dfx1wjg1peb0w"]
+[gd_scene load_steps=29 format=4 uid="uid://dfx1wjg1peb0w"]
 
+[ext_resource type="PackedScene" uid="uid://65qj28r5gkiq" path="res://level_config.tscn" id="1_lmqi1"]
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Misc Assets/Paper3.png" id="1_qeqk5"]
 [ext_resource type="Shader" uid="uid://d0no8jpugg18o" path="res://Color Management/TileShader.gdshader" id="2_1soli"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Levels/TilesBasic.png" id="3_4pbjs"]
@@ -537,6 +538,8 @@ physics_layer_0/collision_mask = 0
 sources/1 = SubResource("TileSetAtlasSource_15wb7")
 
 [node name="Level2" type="Node2D"]
+
+[node name="LevelConfig" parent="." instance=ExtResource("1_lmqi1")]
 
 [node name="BG" type="Sprite2D" parent="."]
 texture_filter = 1

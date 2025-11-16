@@ -52,6 +52,10 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_pressed("block_color_blue"):
 		_set_block_color("blue")
 		
+	if is_build_mode and event.is_action_pressed("place_block"):
+		_try_place_block()
+
+		
 func _set_block_color(color: String) -> void:
 	current_color = color
 
@@ -116,11 +120,50 @@ func _is_valid_position() -> bool:
 
 	var params := PhysicsShapeQueryParameters2D.new()
 	params.shape = shape
-	params.transform = Transform2D(0, ghost_block.global_position)
+	params.transform = Transform2D(0, ghost_block.global_position - Vector2(8, 8))
 	params.collide_with_areas = true
 	params.collide_with_bodies = true
-	params.collision_mask = 2147483647  # all layers
+	params.collision_mask = 2147483647
+	params.exclude = [ghost_block]        # << IMPORTANT FIX
 
 	var result: Array = space.intersect_shape(params)
 
 	return result.is_empty()
+
+func _try_place_block() -> void:
+	print("TRY PLACE BLOCK TRIGGERED")
+	print("Inventory:", red_blocks, green_blocks, blue_blocks)
+	print("Valid position?:", _is_valid_position())
+	# Check inventory
+	match current_color:
+		"red":
+			if red_blocks <= 0: return
+		"green":
+			if green_blocks <= 0: return
+		"blue":
+			if blue_blocks <= 0: return
+
+	# Check placement validity
+	if not _is_valid_position():
+		return
+
+	# Instantiate the block
+	var block_scene := preload("res://placable_block.tscn")
+	var block := block_scene.instantiate()
+
+	# Set color
+	block.block_color = current_color
+
+	# Position it
+	block.global_position = ghost_block.global_position
+
+	# Add it to the PlacedBlocks container
+	placed_blocks.add_child(block)
+
+	# Decrease inventory
+	match current_color:
+		"red": red_blocks -= 1
+		"green": green_blocks -= 1
+		"blue": blue_blocks -= 1
+
+	print("Placed", current_color, "block. Remaining:", red_blocks, green_blocks, blue_blocks)
