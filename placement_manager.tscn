@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://c1ew34k0py5kp"]
+
+[ext_resource type="Script" uid="uid://cn853paw7y3bg" path="res://placement_manager.gd" id="1_hdgg8"]
+[ext_resource type="Texture2D" uid="uid://bkv4nx33gwof7" path="res://assets/GhostBlock.png" id="2_jdcav"]
+
+[node name="PlacementManager" type="Node"]
+script = ExtResource("1_hdgg8")
+
+[node name="PlacedBlocks" type="Sprite2D" parent="."]
+
+[node name="GhostBlock" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="GhostBlock"]
+modulate = Color(1, 1, 1, 0.53333336)
+texture = ExtResource("2_jdcav")

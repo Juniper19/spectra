@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://dfx1wjg1peb0w"]
+[gd_scene load_steps=28 format=4 uid="uid://dfx1wjg1peb0w"]
 
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Misc Assets/Paper3.png" id="1_qeqk5"]
 [ext_resource type="Shader" uid="uid://d0no8jpugg18o" path="res://Color Management/TileShader.gdshader" id="2_1soli"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://dufa28p2oaul2" path="res://Color Management/Star (Add Color)/star.tscn" id="10_16yl7"]
 [ext_resource type="PackedScene" uid="uid://dyayp3bxxot4c" path="res://Color Management/Boost/BoostOrb.tscn" id="11_3slvs"]
 [ext_resource type="PackedScene" uid="uid://dojdvh0sj0wcg" path="res://ChromaticAbberation.tscn" id="12_1soli"]
+[ext_resource type="PackedScene" uid="uid://c1ew34k0py5kp" path="res://placement_manager.tscn" id="13_4pbjs"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_78pok"]
 
@@ -622,3 +623,5 @@ position = Vector2(234, -55)
 orb_color = Color(0, 1, 0, 1)
 
 [node name="ChromaticAbberation" parent="." instance=ExtResource("12_1soli")]
+
+[node name="PlacementManager" parent="." instance=ExtResource("13_4pbjs")]
