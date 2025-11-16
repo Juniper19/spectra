@@ -55,6 +55,14 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_build_mode"):
 		is_build_mode = !is_build_mode
 		ghost_block.visible = is_build_mode
+
+		# NEW: tell the player
+		var player := get_tree().get_first_node_in_group("player")
+		if player:
+			player.set_build_mode(is_build_mode)
+
+		_set_player_frozen(is_build_mode)
+		_set_grid_visible(is_build_mode)
 		return
 
 	if not is_build_mode:
@@ -98,6 +106,17 @@ func _process(delta: float) -> void:
 	_update_ghost_position()
 	_update_ghost_validity()
 
+func _set_player_frozen(state: bool) -> void:
+	var players := get_tree().get_nodes_in_group("player")
+	if players.size() > 0:
+		var p = players[0]
+		if "build_frozen" in p:
+			p.build_frozen = state
+
+func _set_grid_visible(state: bool) -> void:
+	var grid := $GridOverlay   # you'll add a Placeholder Node2D named GridOverlay
+	if grid:
+		grid.visible = state
 
 func _update_ghost_position() -> void:
 	var mouse_pos := get_viewport().get_camera_2d().get_global_mouse_position()

@@ -19,3 +19,5 @@ texture = ExtResource("2_jdcav")
 [node name="XSprite" type="Sprite2D" parent="GhostBlock"]
 visible = false
 texture = ExtResource("3_jdcav")
+
+[node name="GridOverlay" type="Node2D" parent="."]

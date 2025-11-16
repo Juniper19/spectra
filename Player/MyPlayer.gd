@@ -15,6 +15,8 @@ var jump_buffer_timer: float = 0.0
 @export var apex_threshold: float = 40.0      # smaller = narrower apex zone
 
 var spawn_position: Vector2
+var is_build_mode: bool = false
+
 # ---------------- Color Settings ----------------
 @export var total_colors: Array[Color] = [
 	Color.RED,
@@ -115,20 +117,16 @@ func _physics_process(delta: float) -> void:
 
 	# ---------------- Gravity, Apex Modifier & Variable Jump ----------------
 	if not is_on_floor():
-		var gravity_force := gravity
+		var gravity_force: float = gravity
 
-		# Apex modifier – lighter gravity near the peak of a jump
 		if abs(velocity.y) < apex_threshold:
 			gravity_force *= apex_gravity_scale
 
-		# Apply stronger gravity when falling
 		if velocity.y > 0:
 			gravity_force *= 1.4
 
-		# Apply total gravity force
 		velocity.y += gravity_force * delta
 
-		# Variable jump height – cut short if jump is released early
 		if velocity.y < 0 and Input.is_action_just_released("up"):
 			velocity.y *= jump_cut_multiplier
 	else:
@@ -140,104 +138,123 @@ func _physics_process(delta: float) -> void:
 	else:
 		coyote_timer = max(coyote_timer - delta, 0.0)
 
-	# ---------------- Movement ----------------
-	if not selecting_color:
-		var direction: float = Input.get_axis("left", "right")
+	# -----------------------------------------------------
+	# ---------------- BUILD MODE MOVEMENT ----------------
+	# -----------------------------------------------------
+	if is_build_mode:
+		# No horizontal control
+		velocity.x = 0.0
 
-		if direction != 0:
-			# Detect if changing direction
-			if sign(velocity.x) != sign(direction) and abs(velocity.x) > 10.0:
-				# Instantly reduce deceleration penalty when reversing
-				velocity.x = direction * min(abs(velocity.x), speed)
-			
-			# Accelerate toward target
-			velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
-		else:
-			# Only apply friction when no input
-			velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+		# No jumping
+		jump_buffer_timer = 0.0
 
-		# Flip sprite horizontally
-		if direction != 0:
-			sprite.flip_h = direction < 0
-
-		# --- Animation Logic ---
+		# Animations
 		if not is_on_floor():
-			if sprite.animation != "jump" or not sprite.is_playing():
+			if sprite.animation != "jump":
 				sprite.play("jump")
 		else:
-			if direction != 0:
-				if sprite.animation != "walk" or not sprite.is_playing():
-					sprite.play("walk")
-			else:
-				if sprite.animation != "idle" or not sprite.is_playing():
-					sprite.play("idle")
+			if sprite.animation != "idle":
+				sprite.play("idle")
 
-		# Jump logic (buffer + coyote)
-		if jump_buffer_timer > 0.0 and (is_on_floor() or coyote_timer > 0.0):
-			velocity.y = -jump_force
-			coyote_timer = 0.0
-			jump_buffer_timer = 0.0
+		# Gravity + collisions still apply normally (needed!)
+		velocity.y += gravity * delta
+		move_and_slide()
 
-			# preserve a bit of momentum boost based on horizontal speed
-			if abs(velocity.x) > speed * 0.8:
-				velocity.x *= 1.1
+		# Stop + reset flow
+		flow_enabled = false
+		flow_timer = 0.0
+		flow_meter = 0.0
+		return
 
+	# -----------------------------------------------------
+	# ---------------- NORMAL MOVEMENT --------------------
+	# -----------------------------------------------------
+	var direction: float = Input.get_axis("left", "right")
+
+	if direction != 0:
+		if sign(velocity.x) != sign(direction) and abs(velocity.x) > 10.0:
+			velocity.x = direction * min(abs(velocity.x), speed)
+
+		velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
 	else:
-		# While selecting color, keep momentum
-		velocity.x = lerp(velocity.x, 0.0, 0.02)
+		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 
-	# ---------------- Flow Meter Logic ----------------
+	# Flip sprite
+	if direction != 0:
+		sprite.flip_h = direction < 0
+
+	# Animation
+	if not is_on_floor():
+		if sprite.animation != "jump":
+			sprite.play("jump")
+	else:
+		if direction != 0:
+			if sprite.animation != "walk":
+				sprite.play("walk")
+		else:
+			if sprite.animation != "idle":
+				sprite.play("idle")
+
+	# Jumping
+	if jump_buffer_timer > 0.0 and (is_on_floor() or coyote_timer > 0.0):
+		velocity.y = -jump_force
+		coyote_timer = 0.0
+		jump_buffer_timer = 0.0
+
+		if abs(velocity.x) > speed * 0.8:
+			velocity.x *= 1.1
+
+	# -----------------------------------------------------
+	# ---------------- FLOW LOGIC -------------------------
+	# -----------------------------------------------------
 	if flow_enabled:
-		var fps := Engine.physics_ticks_per_second
+		var fps: int = Engine.physics_ticks_per_second
 		var real_delta: float = (1.0 / fps) if fps > 0 else delta
 
 		if is_on_floor():
-			var dir: float = Input.get_axis("left", "right")
+			var dir_val: float = Input.get_axis("left", "right")
 			var touching_wall: bool = false
 
-			# Detect if player is colliding with a wall in the direction they're pressing
 			for i in range(get_slide_collision_count()):
 				var collision := get_slide_collision(i)
-				if collision.get_normal().x != 0.0:  # horizontal wall
-					if sign(collision.get_normal().x) == -sign(dir): 
+				if collision.get_normal().x != 0.0:
+					if sign(collision.get_normal().x) == -sign(dir_val):
 						touching_wall = true
-						break 
+						break
 
-			var moving: bool = abs(velocity.x) > 5.0 and not touching_wall
+			var moving: bool = (abs(velocity.x) > 5.0) and (not touching_wall)
 
-			if dir != 0 and moving:
-				# Actively moving, not blocked
+			if dir_val != 0.0 and moving:
 				flow_idle_timer = 0.0
 				flow_meter = clampf(flow_meter + flow_gain_rate * real_delta, 0.0, max_flow)
 			else:
-				# Idle or pushing into wall
 				flow_idle_timer += real_delta
 				if flow_idle_timer > flow_idle_grace:
 					flow_meter = clampf(flow_meter - flow_decay_rate * real_delta, 0.0, max_flow)
 
-	# if flow hits 0, start a new delay timer before it can rise again
+	# flow hits 0 → delay reset
 	if flow_enabled and flow_meter <= 0.0:
 		flow_enabled = false
 		flow_timer = 0.0
 
-	# ---------------- Update speed & vignette ----------------
+	# Speed scaling from flow
 	var flow_multiplier: float = 1.0 + (flow_meter / max_flow) * 0.7
 	speed = base_speed * flow_multiplier
 
-	# Target vignette intensity based on flow
+	# Update vignette visuals
 	var target_intensity: float = flow_meter / max_flow
 	var current_intensity: float = vignette_mat.get_shader_parameter("intensity")
-	var smoothed_intensity: float = lerp(current_intensity, target_intensity, 5.0 * delta)
-	vignette_mat.set_shader_parameter("intensity", smoothed_intensity)
+	vignette_mat.set_shader_parameter("intensity", lerp(current_intensity, target_intensity, 5.0 * delta))
 
-	# Smoothly fade vignette color to match player color
-	var current_vignette_color: Color = vignette_mat.get_shader_parameter("color")
-	var target_color: Color = total_colors[unlocked_colors[current_color_index]]
-	var smoothed_color: Color = current_vignette_color.lerp(target_color, 5.0 * delta)
-	vignette_mat.set_shader_parameter("color", smoothed_color)
-	
+	var current_vc: Color = vignette_mat.get_shader_parameter("color")
+	var target_vc: Color = total_colors[unlocked_colors[current_color_index]]
+	vignette_mat.set_shader_parameter("color", current_vc.lerp(target_vc, 5.0 * delta))
+
+	# ---------------- Final Move ----------------
 	move_and_slide()
 	check_deathpit()
+
+
 
 # ---------------- Color Selector Logic ----------------
 var mouse_selecting := false
@@ -246,6 +263,8 @@ var mouse_start_position: Vector2
 var drag_threshold: float = 30.0  # how far you must drag before it counts
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_build_mode:
+		return
 	# --- Right Mouse Button Pressed (enter selection) ---
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed and not mouse_selecting:
@@ -527,3 +546,16 @@ func respawn() -> void:
 	global_position = spawn_position
 	velocity = Vector2.ZERO
 	shader_mat.set_shader_parameter("outline_color", current_color)
+	
+# ---------------- Build mode  ----------------
+func set_build_mode(active: bool) -> void:
+	is_build_mode = active
+
+	if active:
+		# Immediately cancel color selection if active
+		if mouse_selecting or selecting_color:
+			mouse_selecting = false
+			selecting_color = false
+			color_selector.visible = false
+			selected_index = current_color_index
+			Engine.time_scale = 1.0
