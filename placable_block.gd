@@ -1,4 +1,4 @@
-extends Area2D
+extends StaticBody2D
 
 @export var block_color: String = "red"
 
@@ -20,12 +20,11 @@ func _apply_color() -> void:
 
 
 func _set_collision_layer() -> void:
-	# Clear all color layers (2=red, 3=blue, 4=green)
-	set_collision_layer_value(2, false)
-	set_collision_layer_value(3, false)
-	set_collision_layer_value(4, false)
+	# Clear ALL layers first so we don't accidentally stay on layer 1
+	for i in range(1, 33):
+		set_collision_layer_value(i, false)
 
-	# Activate only the correct one
+	# Now enable only the layer for this color
 	match block_color:
 		"red":
 			set_collision_layer_value(2, true)

@@ -6,8 +6,9 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jdcav"]
 size = Vector2(16, 16)
 
-[node name="PlacableBlock" type="Area2D"]
+[node name="PlacableBlock" type="StaticBody2D"]
 script = ExtResource("1_3c3sf")
+block_color = null
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_tooet")
