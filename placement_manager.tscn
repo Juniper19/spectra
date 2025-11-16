@@ -9,15 +9,18 @@
 script = ExtResource("1_hdgg8")
 
 [node name="PlacedBlocks" parent="." instance=ExtResource("2_jo25f")]
+position = Vector2(8, -8)
 
 [node name="GhostBlock" type="Node2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="GhostBlock"]
 modulate = Color(1, 1, 1, 0.53333336)
+position = Vector2(8, -8)
 texture = ExtResource("2_jdcav")
 
 [node name="XSprite" type="Sprite2D" parent="GhostBlock"]
 visible = false
+position = Vector2(8, -8)
 texture = ExtResource("3_jdcav")
 
 [node name="GridOverlay" type="Node2D" parent="."]
