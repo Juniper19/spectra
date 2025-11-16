@@ -37,15 +37,40 @@ func _load_level_inventory() -> void:
 # Toggle build mode
 # -----------------------------
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("toggle_build_mode"):   # you will bind this to Q
+	if event.is_action_pressed("toggle_build_mode"):
 		is_build_mode = !is_build_mode
 		ghost_block.visible = is_build_mode
+
+	if not is_build_mode:
+		return
+
+	# Color switching
+	if event.is_action_pressed("block_color_red"):
+		_set_block_color("red")
+	elif event.is_action_pressed("block_color_green"):
+		_set_block_color("green")
+	elif event.is_action_pressed("block_color_blue"):
+		_set_block_color("blue")
+		
+func _set_block_color(color: String) -> void:
+	current_color = color
+
+	var ghost_sprite := ghost_block.get_node("Sprite2D")
+
+	match color:
+		"red":
+			ghost_sprite.modulate = Color(1, 0.4, 0.4, 0.4)  # faint red
+		"green":
+			ghost_sprite.modulate = Color(0.4, 1, 0.4, 0.4)
+		"blue":
+			ghost_sprite.modulate = Color(0.4, 0.4, 1, 0.4)
 
 func _process(delta: float) -> void:
 	if not is_build_mode:
 		return
 
 	_update_ghost_position()
+	_update_ghost_validity()
 	
 func _update_ghost_position() -> void:
 	# Get the mouse position in world coordinates
@@ -59,3 +84,43 @@ func _update_ghost_position() -> void:
 	)
 
 	ghost_block.global_position = snapped
+
+func _update_ghost_validity() -> void:
+	var valid := _is_valid_position()
+
+	var sprite := ghost_block.get_node("Sprite2D")
+	var x_sprite := ghost_block.get_node("XSprite")
+
+	if valid:
+		# restore ghost color based on selected block color
+		match current_color:
+			"red":
+				sprite.modulate = Color(1, 0.4, 0.4, 0.4)
+			"green":
+				sprite.modulate = Color(0.4, 1, 0.4, 0.4)
+			"blue":
+				sprite.modulate = Color(0.4, 0.4, 1, 0.4)
+
+		x_sprite.visible = false
+
+	else:
+		# invalid = ghost turns red + X icon
+		sprite.modulate = Color(1, 0, 0, 0.4)
+		x_sprite.visible = true
+		
+func _is_valid_position() -> bool:
+	var space := get_viewport().get_world_2d().direct_space_state
+
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(16, 16)
+
+	var params := PhysicsShapeQueryParameters2D.new()
+	params.shape = shape
+	params.transform = Transform2D(0, ghost_block.global_position)
+	params.collide_with_areas = true
+	params.collide_with_bodies = true
+	params.collision_mask = 2147483647  # all layers
+
+	var result: Array = space.intersect_shape(params)
+
+	return result.is_empty()

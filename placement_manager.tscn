@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c1ew34k0py5kp"]
+[gd_scene load_steps=4 format=3 uid="uid://c1ew34k0py5kp"]
 
 [ext_resource type="Script" uid="uid://cn853paw7y3bg" path="res://placement_manager.gd" id="1_hdgg8"]
 [ext_resource type="Texture2D" uid="uid://bkv4nx33gwof7" path="res://assets/GhostBlock.png" id="2_jdcav"]
+[ext_resource type="Texture2D" uid="uid://g45n12vl5acl" path="res://assets/X.png" id="3_jdcav"]
 
 [node name="PlacementManager" type="Node"]
 script = ExtResource("1_hdgg8")
@@ -13,3 +14,7 @@ script = ExtResource("1_hdgg8")
 [node name="Sprite2D" type="Sprite2D" parent="GhostBlock"]
 modulate = Color(1, 1, 1, 0.53333336)
 texture = ExtResource("2_jdcav")
+
+[node name="XSprite" type="Sprite2D" parent="GhostBlock"]
+visible = false
+texture = ExtResource("3_jdcav")
