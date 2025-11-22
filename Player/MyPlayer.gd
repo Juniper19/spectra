@@ -19,7 +19,6 @@ var is_build_mode: bool = false
 var was_on_floor: bool = false
 var is_crouching: bool = false
 
-
 # ---------------- Color Settings ----------------
 @export var total_colors: Array[Color] = [
 	Color("#B4202A"), # red
@@ -99,7 +98,6 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var on_floor_now := is_on_floor()
-	var just_landed := (not was_on_floor) and on_floor_now
 	was_on_floor = on_floor_now
 
 	# FLOW START DELAY
@@ -178,35 +176,20 @@ func _physics_process(delta: float) -> void:
 		and abs(velocity.x) < 5.0
 	)
 
-	# ---------------- ANIMATION ----------------
+	# ---------------- ANIMATION (NO LAND ANYWHERE) ----------------
 	if not on_floor_now:
-		# AIRBORNE
-		if is_about_to_land():
-			if sprite.animation != "land" and sprite.animation != "jump":
-				sprite.play("land")
-		else:
-			if sprite.animation != "jump":
-				sprite.play("jump")
+		if sprite.animation != "jump":
+			sprite.play("jump")
 
 	else:
-		# ON FLOOR
-		if just_landed:
-			sprite.play("land")
-
-		elif sprite.animation == "land":
-			pass
-
-		# CROUCH
-		elif is_crouching:
+		if is_crouching:
 			if sprite.animation != "crouch":
 				sprite.play("crouch")
 
-		# WALK
 		elif abs(velocity.x) > 5:
 			if sprite.animation != "walk":
 				sprite.play("walk")
 
-		# IDLE
 		else:
 			if sprite.animation != "idle":
 				sprite.play("idle")
@@ -220,7 +203,7 @@ func _physics_process(delta: float) -> void:
 		if abs(velocity.x) > speed * 0.8:
 			velocity.x *= 1.1
 
-	# FLOW LOGIC (unchanged)
+	# FLOW LOGIC
 	if flow_enabled:
 		var fps: int = Engine.physics_ticks_per_second
 		var real_delta: float = (1.0 / fps) if fps > 0 else delta
@@ -263,24 +246,6 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	check_deathpit()
-
-func is_about_to_land() -> bool:
-	if velocity.y <= 0:
-		return false
-	if velocity.y < 40:
-		return false
-
-	var motion := Vector2(0, min(10, velocity.y * get_physics_process_delta_time()))
-	return test_move(transform, motion)
-
-
-# LAND animation exit
-func _on_PlayerArt_animation_finished() -> void:
-	if sprite.animation == "land":
-		if abs(velocity.x) > 5:
-			sprite.play("walk")
-		else:
-			sprite.play("idle")
 
 # ---------------- Color Selector Input ----------------
 var mouse_selecting := false
@@ -326,7 +291,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				color_selector.highlight(selected_index)
 				_apply_color(selected_index)
 
-	# Keyboard color selection
+	# Keyboard selection
 	elif selecting_color and event is InputEventKey and event.pressed:
 		var dir: Vector2 = Vector2.ZERO
 
