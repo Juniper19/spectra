@@ -191,7 +191,8 @@ material = SubResource("ShaderMaterial_ec0fm")
 sprite_frames = SubResource("SpriteFrames_diq8x")
 animation = &"walk"
 autoplay = "idle"
-frame_progress = 0.6172233
+frame = 3
+frame_progress = 0.099788904
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)

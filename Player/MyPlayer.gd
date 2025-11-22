@@ -19,13 +19,13 @@ var is_build_mode: bool = false
 
 # ---------------- Color Settings ----------------
 @export var total_colors: Array[Color] = [
-	Color.RED,
-	Color.GREEN,
-	Color.BLUE,
-	Color.YELLOW
+	Color("#B4202A"), # red
+	Color("#14A02E"), # green
+	Color("#249FDE"), # blue
+	Color("#F9A31B")  # yellow
 ]
 
-var unlocked_colors: Array[int] = [1]
+var unlocked_colors: Array[int] = [2]
 var current_color_index: int = 0
 
 var current_color: Color:
@@ -487,15 +487,14 @@ func update_collision_masks() -> void:
 	set_collision_mask_value(5, false)
 	set_collision_mask_value(16, true)
 
-	var c: Color = current_color
-	if c.is_equal_approx(Color.RED):
-		set_collision_mask_value(2, true)
-	elif c.is_equal_approx(Color.GREEN):
-		set_collision_mask_value(4, true)
-	elif c.is_equal_approx(Color.BLUE):
-		set_collision_mask_value(3, true)
-	elif c.is_equal_approx(Color.YELLOW):
-		set_collision_mask_value(5, true)
+	var id := unlocked_colors[current_color_index]
+
+	match id:
+		0: set_collision_mask_value(2, true) # red
+		1: set_collision_mask_value(4, true) # green
+		2: set_collision_mask_value(3, true) # blue
+		3: set_collision_mask_value(5, true) # yellow
+
 
 
 # ---------------- Death Logic ----------------

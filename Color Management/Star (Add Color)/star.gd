@@ -1,7 +1,7 @@
 @tool
 extends Area2D
 
-@export var star_color: Color
+@export var color_index: int = 0
 @export var star_name: String = ""
 
 func _ready() -> void:
@@ -21,7 +21,7 @@ func _ready() -> void:
 		return
 
 	# --- Set visual color ---
-	modulate = star_color
+	modulate = get_tree().current_scene.get_node("MyPlayer").total_colors[color_index]
 
 	if not Engine.is_editor_hint():
 		connect("body_entered", Callable(self, "_on_body_entered"))
@@ -31,20 +31,16 @@ func _on_body_entered(body: Node) -> void:
 		return
 
 	var player := body
+	player.unlock_color(color_index)
 
-	var idx := _find_color_index(player.total_colors, star_color)
-	if idx == -1:
-		return
-
-	player.unlock_color(idx)
-
-	# --- Mark star as collected ---
+	# Mark collected
 	var collected_stars: Array = get_tree().root.get_meta("collected_stars")
 	if star_name not in collected_stars:
 		collected_stars.append(star_name)
 		get_tree().root.set_meta("collected_stars", collected_stars)
 
 	queue_free()
+
 
 func _find_color_index(list: Array[Color], target: Color) -> int:
 	for i in range(list.size()):
