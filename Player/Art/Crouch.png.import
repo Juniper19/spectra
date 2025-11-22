@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chlacgldbh6ec"
-path="res://.godot/imported/WhiteJump.png-846fe3415f36868da16fedb28ef8698e.ctex"
+uid="uid://bsrmf25wdsgu6"
+path="res://.godot/imported/Crouch.png-8bd0772ef2720aca01e23d4b0d4dd425.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/Art/WhiteJump.png"
-dest_files=["res://.godot/imported/WhiteJump.png-846fe3415f36868da16fedb28ef8698e.ctex"]
+source_file="res://Player/Art/Crouch.png"
+dest_files=["res://.godot/imported/Crouch.png-8bd0772ef2720aca01e23d4b0d4dd425.ctex"]
 
 [params]
 

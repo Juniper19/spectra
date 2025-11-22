@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://brmctxrd2xu0n"
-path="res://.godot/imported/WhiteLand.png-d605ef83a1c80787965c41125f0def8e.ctex"
+uid="uid://dla2t57hlh76w"
+path="res://.godot/imported/Wall Tech.png-ab28ac1f5902addfa41c8a28a0c9147a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/Art/WhiteLand.png"
-dest_files=["res://.godot/imported/WhiteLand.png-d605ef83a1c80787965c41125f0def8e.ctex"]
+source_file="res://Player/Art/Wall Tech.png"
+dest_files=["res://.godot/imported/Wall Tech.png-ab28ac1f5902addfa41c8a28a0c9147a.ctex"]
 
 [params]
 

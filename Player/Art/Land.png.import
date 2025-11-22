@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cf4vlelk3ydf"
-path="res://.godot/imported/WhiteWalk.png-5e9913e2c456bb83059a5c07e57e6d41.ctex"
+uid="uid://brmctxrd2xu0n"
+path="res://.godot/imported/Land.png-9605d074fad048002d49a28ffc4218ed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/Art/WhiteWalk.png"
-dest_files=["res://.godot/imported/WhiteWalk.png-5e9913e2c456bb83059a5c07e57e6d41.ctex"]
+source_file="res://Player/Art/Land.png"
+dest_files=["res://.godot/imported/Land.png-9605d074fad048002d49a28ffc4218ed.ctex"]
 
 [params]
 

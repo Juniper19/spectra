@@ -16,6 +16,9 @@ var jump_buffer_timer: float = 0.0
 
 var spawn_position: Vector2
 var is_build_mode: bool = false
+var was_on_floor: bool = false
+var is_crouching: bool = false
+
 
 # ---------------- Color Settings ----------------
 @export var total_colors: Array[Color] = [
@@ -94,8 +97,11 @@ func _ready() -> void:
 	flow_timer = 0.0
 	flow_enabled = false
 
-
 func _physics_process(delta: float) -> void:
+	var on_floor_now := is_on_floor()
+	var just_landed := (not was_on_floor) and on_floor_now
+	was_on_floor = on_floor_now
+
 	# FLOW START DELAY
 	if not flow_enabled:
 		flow_timer += delta
@@ -109,7 +115,7 @@ func _physics_process(delta: float) -> void:
 		jump_buffer_timer = max(jump_buffer_timer - delta, 0.0)
 
 	# Gravity + apex
-	if not is_on_floor():
+	if not on_floor_now:
 		var gravity_force: float = gravity
 
 		if abs(velocity.y) < apex_threshold:
@@ -126,7 +132,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = 0
 
 	# Coyote time
-	if is_on_floor():
+	if on_floor_now:
 		coyote_timer = coyote_time
 	else:
 		coyote_timer = max(coyote_timer - delta, 0.0)
@@ -136,7 +142,7 @@ func _physics_process(delta: float) -> void:
 		velocity.x = 0.0
 		jump_buffer_timer = 0.0
 
-		if not is_on_floor():
+		if not on_floor_now:
 			if sprite.animation != "jump":
 				sprite.play("jump")
 		else:
@@ -165,20 +171,48 @@ func _physics_process(delta: float) -> void:
 	if direction != 0:
 		sprite.flip_h = direction < 0
 
-	# Animation
-	if not is_on_floor():
-		if sprite.animation != "jump":
-			sprite.play("jump")
+	# ---------------- CROUCH LOGIC ----------------
+	is_crouching = (
+		Input.is_action_pressed("down")
+		and on_floor_now
+		and abs(velocity.x) < 5.0
+	)
+
+	# ---------------- ANIMATION ----------------
+	if not on_floor_now:
+		# AIRBORNE
+		if is_about_to_land():
+			if sprite.animation != "land" and sprite.animation != "jump":
+				sprite.play("land")
+		else:
+			if sprite.animation != "jump":
+				sprite.play("jump")
+
 	else:
-		if direction != 0:
+		# ON FLOOR
+		if just_landed:
+			sprite.play("land")
+
+		elif sprite.animation == "land":
+			pass
+
+		# CROUCH
+		elif is_crouching:
+			if sprite.animation != "crouch":
+				sprite.play("crouch")
+
+		# WALK
+		elif abs(velocity.x) > 5:
 			if sprite.animation != "walk":
 				sprite.play("walk")
+
+		# IDLE
 		else:
 			if sprite.animation != "idle":
 				sprite.play("idle")
 
 	# Jump logic
-	if jump_buffer_timer > 0.0 and (is_on_floor() or coyote_timer > 0.0):
+	if jump_buffer_timer > 0.0 and (on_floor_now or coyote_timer > 0.0):
 		velocity.y = -jump_force
 		coyote_timer = 0.0
 		jump_buffer_timer = 0.0
@@ -186,12 +220,12 @@ func _physics_process(delta: float) -> void:
 		if abs(velocity.x) > speed * 0.8:
 			velocity.x *= 1.1
 
-	# FLOW LOGIC
+	# FLOW LOGIC (unchanged)
 	if flow_enabled:
 		var fps: int = Engine.physics_ticks_per_second
 		var real_delta: float = (1.0 / fps) if fps > 0 else delta
 
-		if is_on_floor():
+		if on_floor_now:
 			var dir_val: float = Input.get_axis("left", "right")
 			var touching_wall: bool = false
 
@@ -230,6 +264,23 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	check_deathpit()
 
+func is_about_to_land() -> bool:
+	if velocity.y <= 0:
+		return false
+	if velocity.y < 40:
+		return false
+
+	var motion := Vector2(0, min(10, velocity.y * get_physics_process_delta_time()))
+	return test_move(transform, motion)
+
+
+# LAND animation exit
+func _on_PlayerArt_animation_finished() -> void:
+	if sprite.animation == "land":
+		if abs(velocity.x) > 5:
+			sprite.play("walk")
+		else:
+			sprite.play("idle")
 
 # ---------------- Color Selector Input ----------------
 var mouse_selecting := false
@@ -310,7 +361,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				color_selector.highlight(selected_index)
 				_apply_color(best_index)
 
-
 func _direction_to_index(angle: float) -> int:
 	var drag_dir := Vector2(cos(angle), sin(angle))
 	var dirs := [
@@ -341,14 +391,12 @@ func _apply_color(index: int) -> void:
 
 	play_color_swap_effect()
 
-
 func play_color_swap_effect() -> void:
 	var tween := create_tween()
 	tween.set_ignore_time_scale(true)
 	tween.tween_property(sprite, "scale", Vector2(0.8, 1.2), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2(1.2, 0.8), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.05).set_trans(Tween.TRANS_SINE)
-
 
 func unlock_color(index: int) -> void:
 	if index not in unlocked_colors and index >= 0 and index < total_colors.size():
@@ -360,7 +408,6 @@ func unlock_color(index: int) -> void:
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.1)
 
 	get_tree().root.set_meta("unlocked_colors", unlocked_colors)
-
 
 func _get_unlocked_color_list() -> Array[Color]:
 	var list: Array[Color] = []

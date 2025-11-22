@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddeck3dr4blqv"
-path="res://.godot/imported/BluePlayerWalk-Sheet.png-33cf73e397cb950e101707e26db968c0.ctex"
+uid="uid://chlacgldbh6ec"
+path="res://.godot/imported/Jump.png-b3781306559c6d01363f5e251d18e527.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/Art/BluePlayerWalk-Sheet.png"
-dest_files=["res://.godot/imported/BluePlayerWalk-Sheet.png-33cf73e397cb950e101707e26db968c0.ctex"]
+source_file="res://Player/Art/Jump.png"
+dest_files=["res://.godot/imported/Jump.png-b3781306559c6d01363f5e251d18e527.ctex"]
 
 [params]
 

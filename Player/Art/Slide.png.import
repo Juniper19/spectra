@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://00su0gyvbd28"
-path="res://.godot/imported/BluePlayerJump.png-7a491c65c5ea8da5eaab6ddf51302330.ctex"
+uid="uid://bpn7dsgrk3h84"
+path="res://.godot/imported/Slide.png-7aa4b41c98c6b1a9ede4a2cf9a8468e5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/Art/BluePlayerJump.png"
-dest_files=["res://.godot/imported/BluePlayerJump.png-7a491c65c5ea8da5eaab6ddf51302330.ctex"]
+source_file="res://Player/Art/Slide.png"
+dest_files=["res://.godot/imported/Slide.png-7aa4b41c98c6b1a9ede4a2cf9a8468e5.ctex"]
 
 [params]
 

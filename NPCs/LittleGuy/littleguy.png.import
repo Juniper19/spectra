@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmni8jhujmfnb"
-path="res://.godot/imported/WhiteIdle.png-a0f2b7dc65d9945b31ee6e1b36355b46.ctex"
+uid="uid://t7lri5w63v3k"
+path="res://.godot/imported/littleguy.png-953f9427a1af8342e40bda67d77f5774.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/Art/WhiteIdle.png"
-dest_files=["res://.godot/imported/WhiteIdle.png-a0f2b7dc65d9945b31ee6e1b36355b46.ctex"]
+source_file="res://NPCs/LittleGuy/littleguy.png"
+dest_files=["res://.godot/imported/littleguy.png-953f9427a1af8342e40bda67d77f5774.ctex"]
 
 [params]
 

@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bnrw21pbc0pf4" path="res://NPCs/LittleGuy/little_guy.gd" id="1_v0pd8"]
 [ext_resource type="Resource" uid="uid://ckbjwcf4lbmtg" path="res://NPCs/LittleGuy/test.dialogue" id="2_hgshy"]
-[ext_resource type="Texture2D" uid="uid://t7lri5w63v3k" path="res://Player/Art/BluePlayerIdle-Sheet.png" id="3_fxgpt"]
+[ext_resource type="Texture2D" uid="uid://t7lri5w63v3k" path="res://NPCs/LittleGuy/littleguy.png" id="3_fxgpt"]
 [ext_resource type="FontFile" uid="uid://d0n8dd1mhivgq" path="res://Misc Assets/monogram.ttf" id="4_fxgpt"]
+
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v0pd8"]
 size = Vector2(74, 34)

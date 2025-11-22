@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://t7lri5w63v3k"
-path="res://.godot/imported/BluePlayerIdle-Sheet.png-8f204e44fb95df1191595da5f074e3b0.ctex"
+uid="uid://by045mcrn1pb3"
+path="res://.godot/imported/LedgeGrab.png-13c553c365b698288554c77a5d69a47c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/Art/BluePlayerIdle-Sheet.png"
-dest_files=["res://.godot/imported/BluePlayerIdle-Sheet.png-8f204e44fb95df1191595da5f074e3b0.ctex"]
+source_file="res://Player/Art/LedgeGrab.png"
+dest_files=["res://.godot/imported/LedgeGrab.png-13c553c365b698288554c77a5d69a47c.ctex"]
 
 [params]
 
