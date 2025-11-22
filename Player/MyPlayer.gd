@@ -25,7 +25,7 @@ var is_build_mode: bool = false
 	Color("#F9A31B")  # yellow
 ]
 
-var unlocked_colors: Array[int] = [2]
+var unlocked_colors: Array[int] = [1]
 var current_color_index: int = 0
 
 var current_color: Color:
@@ -54,7 +54,6 @@ var flow_enabled: bool = false
 var flow_idle_timer: float = 0.0
 @onready var vignette_mat: ShaderMaterial = $FlowVisualizer/Vignette.material
 
-
 # ---------------- Lifecycle ----------------
 func _ready() -> void:
 	# sync global color unlocks
@@ -70,8 +69,8 @@ func _ready() -> void:
 		current_color_index = clamp(current_color_index, 0, unlocked_colors.size() - 1)
 
 	base_speed = speed
-	
-	#change player color
+
+	# change player color
 	($PlayerArt.material as ShaderMaterial).set_shader_parameter("tint_color", current_color)
 
 	update_collision_masks()
@@ -91,9 +90,6 @@ func _ready() -> void:
 
 	color_selector.colors = _get_unlocked_color_list()
 	color_selector.highlight(current_color_index)
-
-	await get_tree().process_frame
-	update_tile_outlines()
 
 	flow_timer = 0.0
 	flow_enabled = false
@@ -312,7 +308,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if best_index != selected_index and best_index < unlocked_colors.size():
 				selected_index = best_index
 				color_selector.highlight(selected_index)
-				_apply_color(selected_index)
+				_apply_color(best_index)
 
 
 func _direction_to_index(angle: float) -> int:
@@ -334,28 +330,16 @@ func _direction_to_index(angle: float) -> int:
 
 	return best_index
 
-func _get_screen_position(world_pos: Vector2) -> Vector2:
-	var cam: Camera2D = $Camera2D
-	if cam == null:
-		return world_pos
-
-	var viewport := get_viewport()
-	var transform: Transform2D = viewport.get_canvas_transform()
-	return transform * world_pos
-
-
 # ---------------- Color Handling ----------------
 func _apply_color(index: int) -> void:
 	current_color_index = index
 	update_collision_masks()
-
 	push_out_of_tiles()
 
 	var mat := $PlayerArt.material as ShaderMaterial
 	mat.set_shader_parameter("tint_color", total_colors[unlocked_colors[index]])
 
 	play_color_swap_effect()
-	update_tile_outlines()
 
 
 func play_color_swap_effect() -> void:
@@ -377,6 +361,7 @@ func unlock_color(index: int) -> void:
 
 	get_tree().root.set_meta("unlocked_colors", unlocked_colors)
 
+
 func _get_unlocked_color_list() -> Array[Color]:
 	var list: Array[Color] = []
 	for i in unlocked_colors:
@@ -384,7 +369,7 @@ func _get_unlocked_color_list() -> Array[Color]:
 			list.append(total_colors[i])
 	return list
 
-
+# ---------------- Collision Pushout ----------------
 func push_out_of_tiles() -> void:
 	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
 
@@ -434,58 +419,14 @@ func push_out_of_tiles() -> void:
 		var impulse: Vector2 = best_dir * BOUNCE * depth_ratio
 		velocity += impulse
 
-
-# ---------------- Tile Outline Update ----------------
-# NOTE: Left untouched exactly as requested
-func update_tile_outlines() -> void:
-	var color_names = ["RED", "GREEN", "BLUE", "YELLOW", "WHITE"]
-	for i in range(color_names.size()):
-		var name = color_names[i]
-		var node_path = "../Platforms" + name
-		if not has_node(node_path):
-			continue
-
-		var tm = get_node(node_path)
-		if tm == null:
-			continue
-
-		var color: Color
-		match name:
-			"RED": color = Color.RED
-			"GREEN": color = Color.GREEN
-			"BLUE": color = Color.BLUE
-			"YELLOW": color = Color.YELLOW
-			"WHITE": color = Color.WHITE
-
-		if name == "WHITE":
-			continue
-
-		if color.is_equal_approx(current_color):
-			tm.material = null
-			var tween := create_tween()
-			tween.set_ignore_time_scale(true)
-			tween.tween_property(tm, "modulate", color, 0.15).set_trans(Tween.TRANS_SINE)
-		else:
-			if tm.material == null:
-				var shader_mat := ShaderMaterial.new()
-				shader_mat.shader = preload("res://Color Management/TileShader.gdshader")
-				tm.material = shader_mat
-
-			tm.material.set_shader_parameter("outline_color", color)
-
-			var tween := create_tween()
-			tween.set_ignore_time_scale(true)
-			tween.tween_property(tm, "modulate", Color.WHITE, 0.15).set_trans(Tween.TRANS_SINE)
-
-
 # ---------------- Collision Masks ----------------
 func update_collision_masks() -> void:
-	set_collision_mask_value(1, true)
-	set_collision_mask_value(2, false)
-	set_collision_mask_value(3, false)
-	set_collision_mask_value(4, false)
-	set_collision_mask_value(5, false)
-	set_collision_mask_value(16, true)
+	set_collision_mask_value(1, true)   # base collisions
+	set_collision_mask_value(2, false) # red
+	set_collision_mask_value(3, false) # blue
+	set_collision_mask_value(4, false) # green
+	set_collision_mask_value(5, false) # yellow
+	set_collision_mask_value(16, true) # death pit
 
 	var id := unlocked_colors[current_color_index]
 
@@ -494,8 +435,6 @@ func update_collision_masks() -> void:
 		1: set_collision_mask_value(4, true) # green
 		2: set_collision_mask_value(3, true) # blue
 		3: set_collision_mask_value(5, true) # yellow
-
-
 
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
