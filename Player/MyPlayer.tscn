@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://cn2f1c4k0n7tl"]
+[gd_scene format=3 uid="uid://cn2f1c4k0n7tl"]
 
 [ext_resource type="Script" uid="uid://cmxxnq8rajj0l" path="res://Player/MyPlayer.gd" id="1_b740q"]
 [ext_resource type="Texture2D" uid="uid://bahxc50ydmh6e" path="res://Misc Assets/Square16.png" id="2_b740q"]
@@ -187,23 +187,23 @@ animations = [{
 "speed": 11.0
 }]
 
-[node name="MyPlayer" type="CharacterBody2D" groups=["player"]]
+[node name="MyPlayer" type="CharacterBody2D" unique_id=545183724 groups=["player"]]
 collision_layer = 2
 script = ExtResource("1_b740q")
 gravity = 1000.0
 coyote_time = 0.08
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=833229232]
 shape = SubResource("RectangleShape2D_3d7gm")
 
-[node name="PlayerArt" type="AnimatedSprite2D" parent="."]
+[node name="PlayerArt" type="AnimatedSprite2D" parent="." unique_id=350385571]
 material = SubResource("ShaderMaterial_3ra7o")
 sprite_frames = SubResource("SpriteFrames_diq8x")
 animation = &"jump"
 autoplay = "idle"
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=455430720 groups=["camera"]]
 zoom = Vector2(2, 2)
 position_smoothing_enabled = true
 
-[node name="FlowVisualizer" parent="." instance=ExtResource("7_3ra7o")]
+[node name="FlowVisualizer" parent="." unique_id=218897420 instance=ExtResource("7_3ra7o")]
