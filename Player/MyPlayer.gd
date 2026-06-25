@@ -531,29 +531,31 @@ func _setup_trail() -> void:
 	trail.z_index = -1
 	add_child(trail)
 
-	trail.local_coords = false  # world-space so particles stay behind as character moves
+	trail.local_coords = false
 	trail.emitting = false
-	trail.amount = 55
-	trail.lifetime = 1.1
+	trail.amount = 18
+	trail.lifetime = 1.6
 	trail.explosiveness = 0.0
-	trail.randomness = 0.7
+	trail.randomness = 0.8  # high randomness = individual scattered orbs, never a dense stream
 
-	# Wide cone behind the character — feels like disturbed space, not car exhaust
-	trail.spread = 65.0
-	trail.gravity = Vector2(0.0, -8.0)   # barely any gravity so they hang and float
-	trail.initial_velocity_min = 10.0
-	trail.initial_velocity_max = 55.0
+	trail.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	trail.emission_rect_extents = Vector2(3, 10)
+
+	trail.spread = 55.0
+	trail.gravity = Vector2(0.0, -6.0)
+	trail.initial_velocity_min = 5.0
+	trail.initial_velocity_max = 22.0  # slow drift, orbs hang in space
 
 	trail.scale_amount_min = 2.5
 	trail.scale_amount_max = 5.0
 
 	trail.preprocess = 0.0  # no pre-fill — trail grows outward from player on start
 
-	# Tiny at birth (no blob at player), peak quickly, then taper off
+	# Gradual ramp up, long hold, soft taper — no sharp clusters
 	var size_curve := Curve.new()
 	size_curve.add_point(Vector2(0.0, 0.0))
-	size_curve.add_point(Vector2(0.08, 1.0))
-	size_curve.add_point(Vector2(0.5, 0.7))
+	size_curve.add_point(Vector2(0.25, 1.0))
+	size_curve.add_point(Vector2(0.75, 0.9))
 	size_curve.add_point(Vector2(1.0, 0.0))
 	trail.scale_amount_curve = size_curve
 
@@ -585,8 +587,8 @@ func _update_trail_color() -> void:
 	var col := current_color
 	var power: float = trail_power
 	var grad := Gradient.new()
-	grad.set_color(0, col.lightened(0.6) * Color(1, 1, 1, power))
-	grad.add_point(0.4, col * Color(1, 1, 1, power * 0.6))
+	grad.set_color(0, col.lightened(0.3) * Color(1, 1, 1, power * 2.0))
+	grad.add_point(0.4, col * Color(1, 1, 1, power * 1.2))
 	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
 	trail.color_ramp = grad
 
@@ -600,18 +602,16 @@ func _update_trail(delta: float) -> void:
 
 	# Build up slowly, decay quickly when you stop
 	if moving:
-		trail_power = clampf(trail_power + delta * 0.4, 0.0, 1.0)
+		trail_power = clampf(trail_power + delta * 0.4, 0.0, 0.5)
 	else:
-		trail_power = clampf(trail_power - delta * 2.0, 0.0, 1.0)
+		trail_power = clampf(trail_power - delta * 2.0, 0.0, 0.5)
 
 	trail.emitting = trail_power > 0.01
 
 	if trail.emitting:
 		var vel_dir: Vector2 = velocity.normalized() if vel_mag > 1.0 else Vector2(-1.0, 0.0)
 		trail.direction = -vel_dir
-		trail.speed_scale = 0.4 + speed_ratio * 0.9
-		trail.spread = lerpf(75.0, 40.0, clampf(speed_ratio, 0.0, 1.0))
-		# Build up visible size over time — trail_power drives opacity via color ramp
+		trail.speed_scale = 0.4 + speed_ratio * 0.6
 		trail.scale_amount_min = lerpf(0.8, 2.5, trail_power)
 		trail.scale_amount_max = lerpf(1.5, 5.0, trail_power)
 		_update_trail_color()
