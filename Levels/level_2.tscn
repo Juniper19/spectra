@@ -548,8 +548,8 @@ sources/1 = SubResource("TileSetAtlasSource_15wb7")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lmqi1"]
 shader = ExtResource("12_4pbjs")
-shader_parameter/bloom_intensity = 1.0
 shader_parameter/bloom_threshold = 0.4
+shader_parameter/bloom_intensity = 1.0
 shader_parameter/blur_size = 3.0
 shader_parameter/tint_color = Color(1, 1, 1, 1)
 shader_parameter/vignette_strength = 0.4
@@ -669,4 +669,3 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="ChromaticAbberation" parent="." unique_id=268167791 instance=ExtResource("12_1soli")]
-visible = false

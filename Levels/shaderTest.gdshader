@@ -1,8 +1,8 @@
 shader_type canvas_item;
 
 uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
-uniform float bloom_intensity : hint_range(0.0, 3.0) = 1.0;
-uniform float bloom_threshold : hint_range(0.0, 1.0) = 0.4;
+uniform float bloom_threshold = 0.15;
+uniform float bloom_intensity = 2.0;
 uniform float blur_size : hint_range(0.0, 10.0) = 3.0;
 uniform vec3 tint_color : source_color = vec3(1.0, 1.0, 1.0);
 uniform float vignette_strength : hint_range(0.0, 2.0) = 0.4;
