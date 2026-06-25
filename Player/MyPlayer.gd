@@ -547,10 +547,13 @@ func _setup_trail() -> void:
 	trail.scale_amount_min = 2.5
 	trail.scale_amount_max = 5.0
 
-	# Bloom in, then shrink and fade — feels like light bursting then dissolving
+	trail.preprocess = 0.0  # no pre-fill — trail grows outward from player on start
+
+	# Tiny at birth (no blob at player), peak quickly, then taper off
 	var size_curve := Curve.new()
-	size_curve.add_point(Vector2(0.0, 0.3))
-	size_curve.add_point(Vector2(0.2, 1.0))
+	size_curve.add_point(Vector2(0.0, 0.0))
+	size_curve.add_point(Vector2(0.08, 1.0))
+	size_curve.add_point(Vector2(0.5, 0.7))
 	size_curve.add_point(Vector2(1.0, 0.0))
 	trail.scale_amount_curve = size_curve
 
@@ -582,8 +585,8 @@ func _update_trail_color() -> void:
 	var col := current_color
 	var power: float = trail_power
 	var grad := Gradient.new()
-	grad.set_color(0, Color(1.0, 1.0, 1.0, power))
-	grad.add_point(0.25, Color(col.r, col.g, col.b, power * 0.75).lightened(0.4))
+	grad.set_color(0, col.lightened(0.6) * Color(1, 1, 1, power))
+	grad.add_point(0.4, col * Color(1, 1, 1, power * 0.6))
 	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
 	trail.color_ramp = grad
 
