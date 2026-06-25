@@ -622,3 +622,4 @@ position = Vector2(234, -55)
 orb_color = Color(0, 1, 0, 1)
 
 [node name="ChromaticAbberation" parent="." instance=ExtResource("12_1soli")]
+visible = false
