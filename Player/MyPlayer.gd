@@ -37,6 +37,10 @@ var selected_index := -1
 @onready var sprite: AnimatedSprite2D = $PlayerArt
 @onready var shader_mat: ShaderMaterial = $PlayerArt.material
 
+# ---------------- Trail ----------------
+var trail: CPUParticles2D
+var trail_power: float = 0.0   # 0..1, builds while moving, fades when stopped
+
 # ---------------- Flow Meter ----------------
 var flow_meter: float = 0.0
 @export var flow_gain_rate: float = 1     # How quickly flow builds per second
@@ -86,6 +90,8 @@ func _ready() -> void:
 		spawn_position = global_position
 
 	color_selector.visible = false
+
+	_setup_trail()
 
 	# UI color wheel
 	color_selector.colors = _get_unlocked_color_list()
@@ -236,6 +242,8 @@ func _physics_process(delta: float) -> void:
 	var smoothed_color: Color = current_vignette_color.lerp(target_color, 5.0 * delta)
 	vignette_mat.set_shader_parameter("color", smoothed_color)
 	
+	_update_trail(delta)
+
 	move_and_slide()
 	check_deathpit()
 
@@ -361,6 +369,7 @@ func _apply_color(index: int) -> void:
 
 	# update player outline color instantly
 	shader_mat.set_shader_parameter("outline_color", total_colors[unlocked_colors[index]])
+	_update_trail_color()
 
 	# trigger the bounce effect
 	play_color_swap_effect()
@@ -514,6 +523,95 @@ func update_collision_masks() -> void:
 		set_collision_mask_value(3, true)
 	elif c.is_equal_approx(Color.YELLOW):
 		set_collision_mask_value(5, true)
+
+# ---------------- Trail ----------------
+func _setup_trail() -> void:
+	trail = CPUParticles2D.new()
+	trail.name = "TrailParticles"
+	trail.z_index = -1
+	add_child(trail)
+
+	trail.local_coords = false  # world-space so particles stay behind as character moves
+	trail.emitting = false
+	trail.amount = 55
+	trail.lifetime = 1.1
+	trail.explosiveness = 0.0
+	trail.randomness = 0.7
+
+	# Wide cone behind the character — feels like disturbed space, not car exhaust
+	trail.spread = 65.0
+	trail.gravity = Vector2(0.0, -8.0)   # barely any gravity so they hang and float
+	trail.initial_velocity_min = 10.0
+	trail.initial_velocity_max = 55.0
+
+	trail.scale_amount_min = 2.5
+	trail.scale_amount_max = 5.0
+
+	# Bloom in, then shrink and fade — feels like light bursting then dissolving
+	var size_curve := Curve.new()
+	size_curve.add_point(Vector2(0.0, 0.3))
+	size_curve.add_point(Vector2(0.2, 1.0))
+	size_curve.add_point(Vector2(1.0, 0.0))
+	trail.scale_amount_curve = size_curve
+
+	trail.texture = _create_soft_circle_texture(12)
+
+	# Additive blend = natural glow with no extra shader
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	trail.material = mat
+
+	_update_trail_color()
+
+func _create_soft_circle_texture(radius: int) -> ImageTexture:
+	var size: int = radius * 2
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var center := Vector2(radius, radius)
+	for y in range(size):
+		for x in range(size):
+			var dist: float = Vector2(x, y).distance_to(center)
+			var t: float = clampf(1.0 - dist / float(radius), 0.0, 1.0)
+			# Cubic falloff — soft halo, hard bright core
+			var alpha: float = t * t * t
+			img.set_pixel(x, y, Color(1.0, 1.0, 1.0, alpha))
+	return ImageTexture.create_from_image(img)
+
+func _update_trail_color() -> void:
+	if trail == null:
+		return
+	var col := current_color
+	var power: float = trail_power
+	var grad := Gradient.new()
+	grad.set_color(0, Color(1.0, 1.0, 1.0, power))
+	grad.add_point(0.25, Color(col.r, col.g, col.b, power * 0.75).lightened(0.4))
+	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
+	trail.color_ramp = grad
+
+func _update_trail(delta: float) -> void:
+	if trail == null:
+		return
+
+	var vel_mag: float = velocity.length()
+	var speed_ratio: float = clampf(vel_mag / base_speed, 0.0, 1.8)
+	var moving: bool = vel_mag > 30.0 and not selecting_color
+
+	# Build up slowly, decay quickly when you stop
+	if moving:
+		trail_power = clampf(trail_power + delta * 0.4, 0.0, 1.0)
+	else:
+		trail_power = clampf(trail_power - delta * 2.0, 0.0, 1.0)
+
+	trail.emitting = trail_power > 0.01
+
+	if trail.emitting:
+		var vel_dir: Vector2 = velocity.normalized() if vel_mag > 1.0 else Vector2(-1.0, 0.0)
+		trail.direction = -vel_dir
+		trail.speed_scale = 0.4 + speed_ratio * 0.9
+		trail.spread = lerpf(75.0, 40.0, clampf(speed_ratio, 0.0, 1.0))
+		# Build up visible size over time — trail_power drives opacity via color ramp
+		trail.scale_amount_min = lerpf(0.8, 2.5, trail_power)
+		trail.scale_amount_max = lerpf(1.5, 5.0, trail_power)
+		_update_trail_color()
 
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
