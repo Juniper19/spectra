@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://dfx1wjg1peb0w"]
 
+[ext_resource type="Script" uid="uid://cwi1ad8b1q2xy" path="res://Levels/bg_stars.gd" id="1_lmqi1"]
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Misc Assets/Paper3.png" id="1_qeqk5"]
 [ext_resource type="Shader" uid="uid://d0no8jpugg18o" path="res://Color Management/TileShader.gdshader" id="2_1soli"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Levels/TilesBasic.png" id="3_4pbjs"]
@@ -546,6 +547,12 @@ shader_parameter/vignette_strength = 0.4
 
 [node name="Level2" type="Node2D" unique_id=960603355]
 
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=589268743]
+layer = -1
+
+[node name="BGStars" type="Node2D" parent="CanvasLayer2" unique_id=88451733]
+script = ExtResource("1_lmqi1")
+
 [node name="BG" type="Sprite2D" parent="." unique_id=560062997]
 visible = false
 texture_filter = 1
@@ -644,3 +651,4 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="ChromaticAbberation" parent="." unique_id=268167791 instance=ExtResource("12_1soli")]
+visible = false
