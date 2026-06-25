@@ -533,7 +533,7 @@ func _setup_trail() -> void:
 
 	trail.local_coords = false
 	trail.emitting = false
-	trail.amount = 18
+	trail.amount = 28
 	trail.lifetime = 1.6
 	trail.explosiveness = 0.0
 	trail.randomness = 0.8  # high randomness = individual scattered orbs, never a dense stream
@@ -553,7 +553,7 @@ func _setup_trail() -> void:
 
 	# Gradual ramp up, long hold, soft taper — no sharp clusters
 	var size_curve := Curve.new()
-	size_curve.add_point(Vector2(0.0, 0.0))
+	size_curve.add_point(Vector2(0.0, 0.4))
 	size_curve.add_point(Vector2(0.25, 1.0))
 	size_curve.add_point(Vector2(0.75, 0.9))
 	size_curve.add_point(Vector2(1.0, 0.0))
