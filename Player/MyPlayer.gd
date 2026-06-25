@@ -530,11 +530,12 @@ func _setup_trail() -> void:
 	trail.name = "TrailParticles"
 	trail.z_index = -1
 	add_child(trail)
-
+	trail.position = Vector2(0, 10)
+	trail.z_index = 11
 	trail.local_coords = false
 	trail.emitting = false
-	trail.amount = 28
-	trail.lifetime = 1.6
+	trail.amount = 10
+	trail.lifetime = 1
 	trail.explosiveness = 0.0
 	trail.randomness = 0.8  # high randomness = individual scattered orbs, never a dense stream
 
@@ -544,9 +545,9 @@ func _setup_trail() -> void:
 	trail.spread = 55.0
 	trail.gravity = Vector2(0.0, -6.0)
 	trail.initial_velocity_min = 5.0
-	trail.initial_velocity_max = 22.0  # slow drift, orbs hang in space
+	trail.initial_velocity_max = 1  # slow drift, orbs hang in space
 
-	trail.scale_amount_min = 2.5
+	trail.scale_amount_min = 1
 	trail.scale_amount_max = 5.0
 
 	trail.preprocess = 0.0  # no pre-fill — trail grows outward from player on start
@@ -585,10 +586,9 @@ func _update_trail_color() -> void:
 	if trail == null:
 		return
 	var col := current_color
-	var power: float = trail_power
 	var grad := Gradient.new()
-	grad.set_color(0, col.lightened(0.3) * Color(1, 1, 1, power * 2.0))
-	grad.add_point(0.4, col * Color(1, 1, 1, power * 1.2))
+	grad.set_color(0, col.lightened(0.3))
+	grad.add_point(0.4, col)
 	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
 	trail.color_ramp = grad
 
@@ -602,11 +602,11 @@ func _update_trail(delta: float) -> void:
 
 	# Build up slowly, decay quickly when you stop
 	if moving:
-		trail_power = clampf(trail_power + delta * 0.4, 0.0, 0.5)
+		trail_power = clampf(trail_power + delta * 0.1, 0.0, 0.5)
 	else:
-		trail_power = clampf(trail_power - delta * 2.0, 0.0, 0.5)
+		trail_power = clampf(trail_power - delta * 1.5, 0.0, 0.5)
 
-	trail.emitting = trail_power > 0.01
+	trail.emitting = trail_power > 0.1
 
 	if trail.emitting:
 		var vel_dir: Vector2 = velocity.normalized() if vel_mag > 1.0 else Vector2(-1.0, 0.0)
@@ -614,7 +614,6 @@ func _update_trail(delta: float) -> void:
 		trail.speed_scale = 0.4 + speed_ratio * 0.6
 		trail.scale_amount_min = lerpf(0.8, 2.5, trail_power)
 		trail.scale_amount_max = lerpf(1.5, 5.0, trail_power)
-		_update_trail_color()
 
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
