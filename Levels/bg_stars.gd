@@ -1,11 +1,13 @@
 extends Node2D
 
 const SCREEN_SIZE = Vector2(1280, 720)
-const COLS = 12
-const ROWS = 8
+const COLS = 8
+const ROWS = 5
 
 var stars = []
 var camera: Camera2D
+var _redraw_accum: float = 0.0
+const REDRAW_INTERVAL: float = 1.0 / 30.0
 
 func _ready():
 	camera = get_tree().get_first_node_in_group("camera")
@@ -55,9 +57,12 @@ func _process(delta):
 		else:
 			star.fade = min(star.fade + delta * 1.5, 1.0)
 
-	queue_redraw()
+	_redraw_accum += delta
+	if _redraw_accum >= REDRAW_INTERVAL:
+		_redraw_accum -= REDRAW_INTERVAL
+		queue_redraw()
 
-func soft_glow(pos: Vector2, radius: float, color: Color, layers: int = 8):
+func soft_glow(pos: Vector2, radius: float, color: Color, layers: int = 4):
 	# white hot center bleeding outward into color
 	for i in layers:
 		var t = float(i) / float(layers)
@@ -127,8 +132,8 @@ func _draw():
 				elif star.tinted:
 					var h = star.hue
 					var c = Color.from_hsv(h, 0.6, 0.8)
-					soft_glow(draw_pos, star.size * 2.5, Color(c.r, c.g, c.b, 0.2 * twinkle))
-					soft_glow(draw_pos, star.size * 1.2, Color(1.0, 1.0, 1.0, 0.15 * twinkle), 3)
+					soft_glow(draw_pos, star.size * 2.5, Color(c.r, c.g, c.b, 0.2 * twinkle), 3)
+					soft_glow(draw_pos, star.size * 1.2, Color(1.0, 1.0, 1.0, 0.15 * twinkle), 2)
 
 				else:
 					var col = Color(0.8, 0.85, 1.0, 0.4 * twinkle)
