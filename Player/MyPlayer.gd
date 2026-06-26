@@ -41,6 +41,12 @@ var selected_index := -1
 var trail: CPUParticles2D
 var trail_power: float = 0.0   # 0..1, builds while moving, fades when stopped
 
+# ---------------- Effects ----------------
+var swap_burst: CPUParticles2D
+var land_burst: CPUParticles2D
+var _pulse_tween: Tween = null
+var _active_pulse_tm: TileMapLayer = null
+
 # ---------------- Flow Meter ----------------
 var flow_meter: float = 0.0
 @export var flow_gain_rate: float = 1     # How quickly flow builds per second
@@ -92,6 +98,7 @@ func _ready() -> void:
 	color_selector.visible = false
 
 	_setup_trail()
+	_setup_effects()
 
 	# UI color wheel
 	color_selector.colors = _get_unlocked_color_list()
@@ -244,7 +251,11 @@ func _physics_process(delta: float) -> void:
 	
 	_update_trail(delta)
 
+	var _was_airborne := not is_on_floor()
+	var _pre_vy := velocity.y
 	move_and_slide()
+	if is_on_floor() and _was_airborne and _pre_vy > 80.0:
+		_trigger_land_shockwave()
 	check_deathpit()
 
 # ---------------- Color Selector Logic ----------------
@@ -370,6 +381,7 @@ func _apply_color(index: int) -> void:
 	# update player outline color instantly
 	shader_mat.set_shader_parameter("outline_color", total_colors[unlocked_colors[index]])
 	_update_trail_color()
+	_update_burst_color()
 
 	# trigger the bounce effect
 	play_color_swap_effect()
@@ -385,6 +397,9 @@ func play_color_swap_effect() -> void:
 	tween.tween_property(sprite, "scale", Vector2(0.8, 1.2), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2(1.2, 0.8), 0.05).set_trans(Tween.TRANS_SINE)
 	tween.tween_property(sprite, "scale", Vector2.ONE, 0.05).set_trans(Tween.TRANS_SINE)
+
+	if swap_burst:
+		swap_burst.restart()
 
 func unlock_color(index: int) -> void:
 	if index not in unlocked_colors and index >= 0 and index < total_colors.size():
@@ -478,8 +493,12 @@ func update_tile_outlines() -> void:
 			"YELLOW": color = Color.YELLOW
 			"WHITE": color = Color.WHITE
 
-		# Skip white platforms entirely
+		# White platforms: always passable, apply wobble shader once
 		if name == "WHITE":
+			if tm.material == null:
+				var wm := ShaderMaterial.new()
+				wm.shader = preload("res://Color Management/WobbleShader.gdshader")
+				tm.material = wm
 			continue
 
 		# Active layer (matches player color)
@@ -488,10 +507,16 @@ func update_tile_outlines() -> void:
 			tm.material = null
 			var tween := create_tween()
 			tween.set_ignore_time_scale(true)
-			tween.tween_property(tm, "modulate", color, 0.15).set_trans(Tween.TRANS_SINE)
+			tween.tween_property(tm, "modulate", color, 0.05).set_trans(Tween.TRANS_SINE)
+			_start_platform_pulse(tm, color)
 
 		# Inactive layers (outline only)
 		else:
+			if tm == _active_pulse_tm:
+				if _pulse_tween:
+					_pulse_tween.kill()
+					_pulse_tween = null
+				_active_pulse_tm = null
 			# If missing material, reapply the shader
 			if tm.material == null:
 				var shader_mat := ShaderMaterial.new()
@@ -502,7 +527,7 @@ func update_tile_outlines() -> void:
 			# Smoothly fade back to white (neutral look)
 			var tween := create_tween()
 			tween.set_ignore_time_scale(true)
-			tween.tween_property(tm, "modulate", Color.WHITE, 0.15).set_trans(Tween.TRANS_SINE)
+			tween.tween_property(tm, "modulate", Color.WHITE, 0.05).set_trans(Tween.TRANS_SINE)
 
 
 # ---------------- Collision Masks ----------------
@@ -614,6 +639,89 @@ func _update_trail(delta: float) -> void:
 		trail.speed_scale = 0.4 + speed_ratio * 0.6
 		trail.scale_amount_min = lerpf(0.8, 2.5, trail_power)
 		trail.scale_amount_max = lerpf(1.5, 5.0, trail_power)
+
+# ---------------- Effects Setup ----------------
+func _setup_effects() -> void:
+	var soft_tex := _create_soft_circle_texture(8)
+
+	var fade_curve := Curve.new()
+	fade_curve.add_point(Vector2(0.0, 1.0))
+	fade_curve.add_point(Vector2(1.0, 0.0))
+
+	swap_burst = CPUParticles2D.new()
+	swap_burst.name = "SwapBurst"
+	swap_burst.z_index = 12
+	swap_burst.local_coords = false
+	swap_burst.emitting = false
+	swap_burst.one_shot = true
+	swap_burst.explosiveness = 1.0
+	swap_burst.amount = 14
+	swap_burst.lifetime = 0.45
+	swap_burst.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	swap_burst.emission_sphere_radius = 5.0
+	swap_burst.spread = 180.0
+	swap_burst.initial_velocity_min = 70.0
+	swap_burst.initial_velocity_max = 150.0
+	swap_burst.gravity = Vector2(0, 80.0)
+	swap_burst.scale_amount_min = 1.5
+	swap_burst.scale_amount_max = 3.5
+	swap_burst.scale_amount_curve = fade_curve
+	swap_burst.texture = soft_tex
+	var sb_mat := CanvasItemMaterial.new()
+	sb_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	swap_burst.material = sb_mat
+	add_child(swap_burst)
+
+	land_burst = CPUParticles2D.new()
+	land_burst.name = "LandBurst"
+	land_burst.z_index = 12
+	land_burst.local_coords = false
+	land_burst.emitting = false
+	land_burst.one_shot = true
+	land_burst.explosiveness = 1.0
+	land_burst.amount = 10
+	land_burst.lifetime = 0.3
+	land_burst.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	land_burst.emission_rect_extents = Vector2(12, 1)
+	land_burst.direction = Vector2(0, -1)
+	land_burst.spread = 80.0
+	land_burst.initial_velocity_min = 40.0
+	land_burst.initial_velocity_max = 110.0
+	land_burst.gravity = Vector2(0, 300.0)
+	land_burst.scale_amount_min = 1.0
+	land_burst.scale_amount_max = 3.0
+	land_burst.scale_amount_curve = fade_curve
+	land_burst.texture = soft_tex
+	var lb_mat := CanvasItemMaterial.new()
+	lb_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	land_burst.material = lb_mat
+	land_burst.position = Vector2(0, 14)
+	add_child(land_burst)
+
+	_update_burst_color()
+
+func _update_burst_color() -> void:
+	if swap_burst == null:
+		return
+	var col := current_color
+	var grad := Gradient.new()
+	grad.set_color(0, col.lightened(0.4))
+	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
+	swap_burst.color_ramp = grad
+	land_burst.color_ramp = grad
+
+func _start_platform_pulse(tm: TileMapLayer, color: Color) -> void:
+	if _pulse_tween:
+		_pulse_tween.kill()
+	_active_pulse_tm = tm
+	_pulse_tween = create_tween().set_loops().set_ignore_time_scale(true)
+	var bright := color.lightened(0.3)
+	_pulse_tween.tween_property(tm, "modulate", bright, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_pulse_tween.tween_property(tm, "modulate", color, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func _trigger_land_shockwave() -> void:
+	if land_burst:
+		land_burst.restart()
 
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
