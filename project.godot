@@ -17,6 +17,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Spectra"
 run/main_scene="uid://dfx1wjg1peb0w"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+run/max_fps=60
+run/low_processor_mode=true
 
 [autoload]
 
@@ -25,6 +27,7 @@ DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 [display]
 
 window/stretch/mode="viewport"
+window/vsync/vsync_mode=0
 
 [editor_plugins]
 
