@@ -23,6 +23,16 @@ func _ready() -> void:
 	var sprite_candidate := get_node_or_null("Sprite2D")
 	sprite = sprite_candidate if sprite_candidate else get_node_or_null("AnimatedSprite2D")
 
+	if not Engine.is_editor_hint() and sprite:
+		var gm := ShaderMaterial.new()
+		gm.shader = preload("res://Color Management/EtherealGlow.gdshader")
+		sprite.material = gm
+
+		var start_y := position.y
+		var bob := create_tween().set_loops()
+		bob.tween_property(self, "position:y", start_y - 5.0, 1.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		bob.tween_property(self, "position:y", start_y, 1.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("player"):
 		player_in_area = body

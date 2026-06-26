@@ -26,6 +26,17 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		connect("body_entered", Callable(self, "_on_body_entered"))
 
+		var spr := get_node_or_null("AnimatedSprite2D")
+		if spr:
+			var gm := ShaderMaterial.new()
+			gm.shader = preload("res://Color Management/EtherealGlow.gdshader")
+			spr.material = gm
+
+		var start_y := position.y
+		var bob := create_tween().set_loops()
+		bob.tween_property(self, "position:y", start_y - 6.0, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		bob.tween_property(self, "position:y", start_y, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
 func _on_body_entered(body: Node) -> void:
 	if not body.is_in_group("player"):
 		return
