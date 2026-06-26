@@ -41,6 +41,11 @@ var selected_index := -1
 var trail: CPUParticles2D
 var trail_power: float = 0.0   # 0..1, builds while moving, fades when stopped
 
+# ---------------- Jump / Land Bursts ----------------
+var land_burst: CPUParticles2D
+var jump_burst: CPUParticles2D
+var was_on_floor: bool = false
+
 # ---------------- Flow Meter ----------------
 var flow_meter: float = 0.0
 @export var flow_gain_rate: float = 1     # How quickly flow builds per second
@@ -92,6 +97,7 @@ func _ready() -> void:
 	color_selector.visible = false
 
 	_setup_trail()
+	_setup_bursts()
 
 	# UI color wheel
 	color_selector.colors = _get_unlocked_color_list()
@@ -188,6 +194,8 @@ func _physics_process(delta: float) -> void:
 			if abs(velocity.x) > speed * 0.8:
 				velocity.x *= 1.1
 
+			_trigger_burst(jump_burst)
+
 	else:
 		# While selecting color, keep momentum
 		velocity.x = lerp(velocity.x, 0.0, 0.02)
@@ -243,6 +251,12 @@ func _physics_process(delta: float) -> void:
 	vignette_mat.set_shader_parameter("color", smoothed_color)
 	
 	_update_trail(delta)
+
+	# Landing detection
+	var on_floor_now: bool = is_on_floor()
+	if on_floor_now and not was_on_floor:
+		_trigger_burst(land_burst)
+	was_on_floor = on_floor_now
 
 	move_and_slide()
 	check_deathpit()
@@ -614,6 +628,71 @@ func _update_trail(delta: float) -> void:
 		trail.speed_scale = 0.4 + speed_ratio * 0.6
 		trail.scale_amount_min = lerpf(0.8, 2.5, trail_power)
 		trail.scale_amount_max = lerpf(1.5, 5.0, trail_power)
+
+# ---------------- Jump / Land Bursts ----------------
+func _setup_bursts() -> void:
+	var tex: ImageTexture = _create_soft_circle_texture(16)
+
+	land_burst = _make_burst_node(tex)
+	land_burst.name = "LandBurst"
+	land_burst.position = Vector2(0, 12)
+	land_burst.direction = Vector2(0, -1)   # upward + sideways via spread
+	land_burst.spread = 70.0
+	land_burst.gravity = Vector2(0, 80)
+	land_burst.initial_velocity_min = 20.0
+	land_burst.initial_velocity_max = 60.0
+	land_burst.amount = 16
+	land_burst.lifetime = 0.5
+	add_child(land_burst)
+
+	jump_burst = _make_burst_node(tex)
+	jump_burst.name = "JumpBurst"
+	jump_burst.position = Vector2(0, 12)
+	jump_burst.direction = Vector2(0, 1)    # downward into the platform
+	jump_burst.spread = 55.0
+	jump_burst.gravity = Vector2(0, 30)
+	jump_burst.initial_velocity_min = 25.0
+	jump_burst.initial_velocity_max = 70.0
+	jump_burst.amount = 14
+	jump_burst.lifetime = 0.4
+	add_child(jump_burst)
+
+func _make_burst_node(tex: ImageTexture) -> CPUParticles2D:
+	var p := CPUParticles2D.new()
+	p.z_index = 10
+	p.local_coords = false
+	p.emitting = false
+	p.one_shot = true
+	p.explosiveness = 0.95
+	p.randomness = 0.6
+
+	p.scale_amount_min = 0.6
+	p.scale_amount_max = 1.8
+
+	var size_curve := Curve.new()
+	size_curve.add_point(Vector2(0.0, 1.0))
+	size_curve.add_point(Vector2(0.4, 0.7))
+	size_curve.add_point(Vector2(1.0, 0.0))
+	p.scale_amount_curve = size_curve
+
+	p.texture = tex
+
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	p.material = mat
+
+	return p
+
+func _trigger_burst(burst: CPUParticles2D) -> void:
+	if burst == null:
+		return
+	var col: Color = current_color
+	var grad := Gradient.new()
+	grad.set_color(0, col.lightened(0.6))
+	grad.add_point(0.3, col.lightened(0.2))
+	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
+	burst.color_ramp = grad
+	burst.emitting = true
 
 # ---------------- Death Logic ----------------
 func check_deathpit() -> void:
