@@ -517,17 +517,22 @@ func update_tile_outlines() -> void:
 					_pulse_tween.kill()
 					_pulse_tween = null
 				_active_pulse_tm = null
-			# If missing material, reapply the shader
-			if tm.material == null:
-				var shader_mat := ShaderMaterial.new()
-				shader_mat.shader = preload("res://Color Management/TileShader.gdshader")
-				tm.material = shader_mat
-			tm.material.set_shader_parameter("outline_color", color)
 
-			# Smoothly fade back to white (neutral look)
-			var tween := create_tween()
-			tween.set_ignore_time_scale(true)
-			tween.tween_property(tm, "modulate", Color.WHITE, 0.05).set_trans(Tween.TRANS_SINE)
+			var tween := create_tween().set_ignore_time_scale(true)
+			if tm.material == null:
+				# Was the active (full-color) platform — fade color out, then switch to outline
+				tween.tween_property(tm, "modulate", Color(color.r * 0.12, color.g * 0.12, color.b * 0.12, 1.0), 0.3).set_trans(Tween.TRANS_SINE)
+				tween.tween_callback(func():
+					var sm := ShaderMaterial.new()
+					sm.shader = preload("res://Color Management/TileShader.gdshader")
+					sm.set_shader_parameter("outline_color", color)
+					tm.material = sm
+					tm.modulate = Color.WHITE
+				)
+			else:
+				# Already outline — just refresh color param and tween modulate if needed
+				tm.material.set_shader_parameter("outline_color", color)
+				tween.tween_property(tm, "modulate", Color.WHITE, 0.2).set_trans(Tween.TRANS_SINE)
 
 
 # ---------------- Collision Masks ----------------
@@ -655,13 +660,13 @@ func _setup_effects() -> void:
 	swap_burst.emitting = false
 	swap_burst.one_shot = true
 	swap_burst.explosiveness = 1.0
-	swap_burst.amount = 14
-	swap_burst.lifetime = 0.45
+	swap_burst.amount = 8
+	swap_burst.lifetime = 0.22
 	swap_burst.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
 	swap_burst.emission_sphere_radius = 5.0
 	swap_burst.spread = 180.0
-	swap_burst.initial_velocity_min = 70.0
-	swap_burst.initial_velocity_max = 150.0
+	swap_burst.initial_velocity_min = 35.0
+	swap_burst.initial_velocity_max = 80.0
 	swap_burst.gravity = Vector2(0, 80.0)
 	swap_burst.scale_amount_min = 1.5
 	swap_burst.scale_amount_max = 3.5
@@ -705,7 +710,7 @@ func _update_burst_color() -> void:
 		return
 	var col := current_color
 	var grad := Gradient.new()
-	grad.set_color(0, col.lightened(0.4))
+	grad.set_color(0, col.lightened(0.15))
 	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
 	swap_burst.color_ramp = grad
 	land_burst.color_ramp = grad
