@@ -520,17 +520,17 @@ func update_tile_outlines() -> void:
 
 			var tween := create_tween().set_ignore_time_scale(true)
 			if tm.material == null:
-				# Was the active (full-color) platform — fade color out, then switch to outline
-				tween.tween_property(tm, "modulate", Color(color.r * 0.12, color.g * 0.12, color.b * 0.12, 1.0), 0.3).set_trans(Tween.TRANS_SINE)
-				tween.tween_callback(func():
-					var sm := ShaderMaterial.new()
-					sm.shader = preload("res://Color Management/TileShader.gdshader")
-					sm.set_shader_parameter("outline_color", color)
-					tm.material = sm
-					tm.modulate = Color.WHITE
-				)
+				# Was the active (full-color) platform — apply outline shader immediately
+				# but start modulate at the platform color so the outline looks colored,
+				# then drain to white. Avoids any black flash.
+				var sm := ShaderMaterial.new()
+				sm.shader = preload("res://Color Management/TileShader.gdshader")
+				sm.set_shader_parameter("outline_color", color)
+				tm.material = sm
+				tm.modulate = color
+				tween.tween_property(tm, "modulate", Color.WHITE, 0.35).set_trans(Tween.TRANS_SINE)
 			else:
-				# Already outline — just refresh color param and tween modulate if needed
+				# Already outline — just refresh color param
 				tm.material.set_shader_parameter("outline_color", color)
 				tween.tween_property(tm, "modulate", Color.WHITE, 0.2).set_trans(Tween.TRANS_SINE)
 
