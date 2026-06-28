@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3ujgj1y7l0vw"
-path="res://.godot/imported/WumpRun.png-ed3f8ef4b86ff0f9bb7011fc137dff58.ctex"
+uid="uid://4a2urphkye00"
+path="res://.godot/imported/WumpRunEXSPACE-Sheet.png-7a51012516687ddaed293fc10c65003b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/New Art/WumpRun.png"
-dest_files=["res://.godot/imported/WumpRun.png-ed3f8ef4b86ff0f9bb7011fc137dff58.ctex"]
+source_file="res://Player/New Art/WumpRunEXSPACE-Sheet.png"
+dest_files=["res://.godot/imported/WumpRunEXSPACE-Sheet.png-7a51012516687ddaed293fc10c65003b.ctex"]
 
 [params]
 

@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://c846kyey78mf8"]
+
+[ext_resource type="Shader" uid="uid://d05fntu8grs1u" path="res://Levels/shaderTest.gdshader" id="1_7ks7m"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lmqi1"]
+shader = ExtResource("1_7ks7m")
+shader_parameter/bloom_threshold = 0.4
+shader_parameter/bloom_intensity = 1.0
+shader_parameter/blur_size = 3.0
+shader_parameter/tint_color = Color(1, 1, 1, 1)
+shader_parameter/vignette_strength = 0.4
+
+[node name="GlowShader" type="CanvasLayer" unique_id=1096860520]
+layer = 10
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1250279609]
+material = SubResource("ShaderMaterial_lmqi1")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true

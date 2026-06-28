@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://bss8t3wlhs8ah"]
+[gd_scene format=4 uid="uid://bss8t3wlhs8ah"]
 
 [ext_resource type="Texture2D" uid="uid://d0mrvsmf1xk8k" path="res://Misc Assets/Paper3.png" id="1_ll2xe"]
 [ext_resource type="Texture2D" uid="uid://l4f6vxnk7r41" path="res://Levels/TilesBasic.png" id="2_2wvic"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://d02ckkfd2v4l1" path="res://NPCs/LittleGuy/little_guy.tscn" id="6_jyd6i"]
 [ext_resource type="PackedScene" uid="uid://dojdvh0sj0wcg" path="res://ChromaticAbberation.tscn" id="7_pqlhq"]
 [ext_resource type="Texture2D" uid="uid://m2wywdnfhhcf" path="res://assets/Cabin.png" id="8_5wo6p"]
+[ext_resource type="PackedScene" uid="uid://c846kyey78mf8" path="res://GlowShader.tscn" id="9_ndogd"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xrgmn"]
 
@@ -134,9 +135,16 @@ terrain_set_0/terrain_0/name = "Blocks"
 terrain_set_0/terrain_0/color = Color(0, 0, 0, 1)
 sources/1 = SubResource("TileSetAtlasSource_1gg6n")
 
-[node name="Lobby" type="Node2D"]
+[node name="Lobby" type="Node2D" unique_id=316578174]
 
-[node name="BG" type="Sprite2D" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=917885901]
+offset_left = -444.0
+offset_top = -327.0
+offset_right = 407.0
+offset_bottom = 282.0
+
+[node name="BG" type="Sprite2D" parent="." unique_id=16574614]
+visible = false
 texture_filter = 1
 texture_repeat = 2
 material = SubResource("ShaderMaterial_xrgmn")
@@ -144,47 +152,50 @@ texture = ExtResource("1_ll2xe")
 region_enabled = true
 region_rect = Rect2(0, 0, 5000, 5000)
 
-[node name="PlatformsWHITE" type="TileMapLayer" parent="."]
+[node name="PlatformsWHITE" type="TileMapLayer" parent="." unique_id=2030035713]
 tile_map_data = PackedByteArray("AAD5/wIAAQAEAAEAAAD6/wIAAQAEAAEAAAD7/wIAAQAEAAEAAAD8/wIAAQAEAAEAAAD9/wIAAQAEAAEAAAD+/wIAAQAEAAEAAAD//wIAAQAEAAEAAAAAAAIAAQAEAAEAAAABAAIAAQAEAAEAAAACAAIAAQAEAAEAAAADAAIAAQAEAAEAAAAEAAIAAQAEAAEAAAAFAAIAAQAEAAEAAAAGAAIAAQAEAAEAAAAHAAIAAQAEAAEAAAAIAAIAAQAEAAEAAAAJAAIAAQAFAAEAAAD4/wIAAQAEAAEAAAD3/wIAAQAEAAEAAAD2/wIAAQAEAAEAAAD1/wIAAQAEAAEAAAD0/wIAAQADAAEAAAA=")
 tile_set = SubResource("TileSet_x4164")
 
-[node name="LittleGuy" parent="." instance=ExtResource("6_jyd6i")]
+[node name="LittleGuy" parent="." unique_id=493534251 instance=ExtResource("6_jyd6i")]
 position = Vector2(-36, 16)
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=865353607]
 
-[node name="ColorSelector" parent="UI" instance=ExtResource("4_tftiq")]
+[node name="ColorSelector" parent="UI" unique_id=2133701957 instance=ExtResource("4_tftiq")]
 offset_left = -20.0
 offset_top = -20.0
 offset_right = 380.0
 offset_bottom = 80.0
 
-[node name="LevelDoor" parent="." instance=ExtResource("5_1gg6n")]
+[node name="LevelDoor" parent="." unique_id=1298231406 instance=ExtResource("5_1gg6n")]
 position = Vector2(74, 12)
 target_scene = "uid://d0iu3lby11od6"
 spawn_point_name = "FromTestGrounds"
 prompt_text = "test grounds"
 
-[node name="LevelDoor2" parent="." instance=ExtResource("5_1gg6n")]
+[node name="LevelDoor2" parent="." unique_id=115526745 instance=ExtResource("5_1gg6n")]
 position = Vector2(138, 14)
 target_scene = "uid://dfx1wjg1peb0w"
 spawn_point_name = "FromLevel2"
 prompt_text = "level 2"
 
-[node name="Cabin" type="Sprite2D" parent="."]
+[node name="Cabin" type="Sprite2D" parent="." unique_id=1883732150]
 position = Vector2(-179, -35)
 texture = ExtResource("8_5wo6p")
 
-[node name="MyPlayer" parent="." instance=ExtResource("3_tftiq")]
+[node name="MyPlayer" parent="." unique_id=2059612952 instance=ExtResource("3_tftiq")]
 position = Vector2(40, 10)
 
-[node name="SpawnPoints" type="Node2D" parent="."]
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=295966310]
 position = Vector2(0, 1)
 
-[node name="FromLevel2" type="Node2D" parent="SpawnPoints"]
+[node name="FromLevel2" type="Node2D" parent="SpawnPoints" unique_id=2006168205]
 position = Vector2(138, 15)
 
-[node name="FromTestGrounds" type="Node2D" parent="SpawnPoints"]
+[node name="FromTestGrounds" type="Node2D" parent="SpawnPoints" unique_id=249489882]
 position = Vector2(74, 15)
 
-[node name="ChromaticAbberation" parent="." instance=ExtResource("7_pqlhq")]
+[node name="ChromaticAbberation" parent="." unique_id=1694439313 instance=ExtResource("7_pqlhq")]
+
+[node name="GlowShader" parent="." unique_id=1096860520 instance=ExtResource("9_ndogd")]
+visible = false

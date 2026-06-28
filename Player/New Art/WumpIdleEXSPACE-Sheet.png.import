@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ffbmhttqtmx1"
-path="res://.godot/imported/WumpIdle.png-3a6201032932731be617c56ac6e14516.ctex"
+uid="uid://e72spbputn2l"
+path="res://.godot/imported/WumpIdleEXSPACE-Sheet.png-c41422fdbcf2c31147b0b51dd552a34a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Player/New Art/WumpIdle.png"
-dest_files=["res://.godot/imported/WumpIdle.png-3a6201032932731be617c56ac6e14516.ctex"]
+source_file="res://Player/New Art/WumpIdleEXSPACE-Sheet.png"
+dest_files=["res://.godot/imported/WumpIdleEXSPACE-Sheet.png-c41422fdbcf2c31147b0b51dd552a34a.ctex"]
 
 [params]
 

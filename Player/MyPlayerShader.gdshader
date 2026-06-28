@@ -11,13 +11,11 @@ void fragment() {
     bool is_white = tex_color.r > 0.9 && tex_color.g > 0.9 && tex_color.b > 0.9 && tex_color.a > 0.0;
 
     if (is_outline) {
+        COLOR = vec4(0.0, 0.0, 0.0, tex_color.a);
+    } else if (is_white) {
         vec3 glow = outline_color.rgb * glow_intensity;
         COLOR = vec4(outline_color.rgb + glow, tex_color.a);
-    }
-    else if (is_white) {
-        COLOR = vec4(1.0, 1.0, 1.0, tex_color.a);
-    }
-    else {
+    } else {
         discard;
     }
 }
