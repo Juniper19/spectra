@@ -493,14 +493,6 @@ func update_tile_outlines() -> void:
 			"YELLOW": color = Color.YELLOW
 			"WHITE": color = Color.WHITE
 
-		# White platforms: always passable, apply wobble shader once
-		if name == "WHITE":
-			if tm.material == null:
-				var wm := ShaderMaterial.new()
-				wm.shader = preload("res://Color Management/WobbleShader.gdshader")
-				tm.material = wm
-			continue
-
 		# Active layer (matches player color)
 		if color.is_equal_approx(current_color):
 			# Remove shader and smoothly fade modulate to full color
